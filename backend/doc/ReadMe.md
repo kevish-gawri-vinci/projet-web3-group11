@@ -19,16 +19,16 @@ Here is a list of the endpoints with a description
 
 |URI |Method |Params |Description |
 |-|-|-|-|
-|`/auth/signup`| `POST`|  username (string)<br> password (string) |Creates a user in the database
-|`/auth/connect`|`POST`| username (string)<br> password (string)    | Connects a user to the website |
-|`/user/get/:id`|`GET`|id (number)|Gets the information of a User|
+|`/auth/signup`| `POST`|1. username (string)<br> 2. password (string) |Creates a user in the database
+|`/auth/connect`|`POST`|1. username (string)<br> 2. password (string)    | Connects a user to the website |
+|`/user/get/:id`|`GET`|1. id (number)|Gets the information of a User|
 |`/article/getall`| `GET`|/|Gets all the articles we have|
 |`/article/get/:id`|<span style="color:green;">`GET`</span>|id (number)|Gets an article of the ID|
-|`/basket/add`|`POST`|userId (number) <br> articleId (number) <br> quantity (number)|Adds an article (of the ID) to the user's basket|
-|`/basket/delete-all`|`DELETE`|userId (number)|Deletes a basket (when a user finalises an order or removes the last article (<i>empty basket</i>))|
-|`/article/remove`|`DELETE`|userId (number) <br> articleId (number)|Removes the article from the user's basket
-|`/order/get-all`|`GET`|userId (number) |Gets all the orders of the user| 
-|`/order/finalise`|`POST`|userId (number)|Finalises the basket of a user|
+|`/basket/add`|`POST`|1. userId (number) <br> 2. articleId (number) <br> 3. quantity (number)|Adds an article (of the ID) to the user's basket|
+|`/basket/delete-all`|`DELETE`|1. userId (number)|Deletes a basket (when a user finalises an order or removes the last article (<i>empty basket</i>))|
+|`/article/remove`|`DELETE`|1. userId (number) <br> 2. articleId (number)|Removes the article from the user's basket
+|`/order/get-all`|`GET`|1. userId (number) |Gets all the orders of the user| 
+|`/order/finalise`|`POST`|1. userId (number)|Finalises the basket of a user|
 </br>
 ## <u>Database diagram</u>
 ![DB Diagram](db_diagram.png)
