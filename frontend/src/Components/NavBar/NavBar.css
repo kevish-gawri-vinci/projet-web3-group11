@@ -1,0 +1,13 @@
+#navbar-wrapper{
+    display: flex;
+    width: 98%;
+    padding: 1%;
+    position: fixed;
+    top: 0;
+    justify-content: right;
+}
+
+.navbar-buttons{
+    margin: 5px;
+    width:min-content;
+}
