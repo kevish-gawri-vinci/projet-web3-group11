@@ -21,8 +21,9 @@ func AddUserHandler(userService service.UserService) gin.HandlerFunc {
 		user := userService.AddUser(userRequest)
 
 		c.JSON(http.StatusCreated, gin.H{
-			"id":       user.Id,
+			"id":       user.ID,
 			"username": user.Username,
+			"password": user.Password,
 		})
 	}
 }

@@ -1,14 +1,24 @@
 package main
 
 import (
+	database "backend/Database"
 	handler "backend/Handler"
 	service "backend/Service"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	userService := service.NewUserService()
+	// Initialize database
+	db, err := database.InitDb()
+
+	if err != nil {
+		fmt.Errorf("A problem occured when connecting to the database")
+	}
+
+	userService := service.NewUserService(db)
+	articleService := service.NewArticleService(db)
 
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
@@ -18,5 +28,7 @@ func main() {
 		})
 	})
 	r.POST("/adduser", handler.AddUserHandler(userService))
+	r.GET("/article/getall", handler.GetAllHandler(articleService))
+
 	r.Run() // listen and serve on 0.0.0.0:8080
 }

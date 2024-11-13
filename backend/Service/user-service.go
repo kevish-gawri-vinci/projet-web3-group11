@@ -3,6 +3,8 @@ package service
 import (
 	entity "backend/Entity"
 	request "backend/Request"
+
+	"gorm.io/gorm"
 )
 
 type UserService interface {
@@ -11,13 +13,15 @@ type UserService interface {
 }
 
 type userService struct {
+	DB *gorm.DB
 }
 
 // AddUser implements UserService.
 func (u *userService) AddUser(addedUser request.AddUserRequest) entity.User {
 	print("Called adduser")
-	newId := 1
-	var user entity.User = entity.User{Id: newId, Username: addedUser.Username, Password: addedUser.Password, IsAdmin: false}
+	db := u.DB
+	var user entity.User
+	db.First(&user)
 	return user
 }
 
@@ -26,6 +30,6 @@ func (u *userService) FindById(id int) entity.User {
 	panic("unimplemented")
 }
 
-func NewUserService() UserService {
-	return &userService{}
+func NewUserService(db *gorm.DB) UserService {
+	return &userService{DB: db}
 }
