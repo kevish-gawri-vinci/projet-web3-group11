@@ -14,11 +14,14 @@ func AddUserHandler(userService service.UserService) gin.HandlerFunc {
 		println(c.PostForm("password"))
 		var userRequest request.UserRequest
 		if err := c.ShouldBind(&userRequest); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "Invalid data",
-			})
+			c.Error(err)
+			return
 		}
-		user := userService.AddUser(userRequest)
+		user, err := userService.AddUser(userRequest)
+		if err != nil {
+			c.Error(err)
+			return
+		}
 
 		c.JSON(http.StatusCreated, gin.H{
 			"id":       user.ID,
@@ -36,7 +39,12 @@ func LoginHandler(userService service.UserService) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Bad Input"})
 			return
 		}
-		result := userService.Login(inputRequest)
+		result, err := userService.Login(inputRequest)
+		if err != nil {
+			c.Error(err)
+			return 
+		}
+
 		c.JSON(http.StatusAccepted, gin.H{
 			"message": result,
 		})

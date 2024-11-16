@@ -4,6 +4,7 @@ import (
 	database "backend/Database"
 	handler "backend/Handler"
 	service "backend/Service"
+	middleware "backend/Middleware"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,8 @@ func main() {
 	articleService := service.NewArticleService(db)
 
 	r := gin.Default()
+	r.Use(middleware.ErrorHandler())
+
 	r.GET("/ping", func(c *gin.Context) {
 		println(c.Query("id"))
 		c.JSON(200, gin.H{
