@@ -30,6 +30,7 @@ func main() {
 	r.POST("/adduser", handler.AddUserHandler(userService))
 	r.GET("/article/getall", handler.GetAllHandler(articleService))
 	r.GET("/article/get/:id", handler.GetOneByIdHandler(articleService))
+	r.POST("/auth/login", handler.LoginHandler(userService))
 
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
