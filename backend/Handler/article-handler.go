@@ -2,6 +2,7 @@ package handler
 
 import (
 	service "backend/Service"
+	utils "backend/Utils"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -14,13 +15,11 @@ func GetAllHandler(articleService service.ArticleService) gin.HandlerFunc {
 		response, err := articleService.GetAll()
 
 		if err != nil {
-			fmt.Println("Erreur : ", err)
-			ctx.JSON(http.StatusInternalServerError, gin.H{
-				"error": err,
-			})
-			return
+			// Send error to the middleware
+			println("test erreur ")
+			utils.ThrowError(ctx, err)
 		}
-
+		println("blabla")
 		fmt.Println(response[0])
 		ctx.JSON(http.StatusOK, gin.H{
 			"response": response,
@@ -34,19 +33,13 @@ func GetOneByIdHandler(articleService service.ArticleService) gin.HandlerFunc {
 		id, err := strconv.Atoi(rawId)
 		print("The converted int ", id)
 		if err != nil || id == 0 {
-			fmt.Println("Erreur : ", err)
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": "Bad Request",
-			})
+			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: err.Error(), Code: http.StatusBadRequest})
 			return
 		}
 
-		article, err := articleService.GetOneById(id)
-		if article.ID == 0 {
-			fmt.Println("Erreur :", err)
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err,
-			})
+		article, error := articleService.GetOneById(id)
+		if err != nil {
+			utils.ThrowError(ctx, error)
 			return
 		}
 		ctx.JSON(http.StatusOK, gin.H{

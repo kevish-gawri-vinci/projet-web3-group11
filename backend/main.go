@@ -3,8 +3,8 @@ package main
 import (
 	database "backend/Database"
 	handler "backend/Handler"
-	service "backend/Service"
 	middleware "backend/Middleware"
+	service "backend/Service"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +20,7 @@ func main() {
 
 	userService := service.NewUserService(db)
 	articleService := service.NewArticleService(db)
+	basketService := service.NewBasketService(db)
 
 	r := gin.Default()
 	r.Use(middleware.ErrorHandler())
@@ -34,6 +35,9 @@ func main() {
 	r.GET("/article/getall", handler.GetAllHandler(articleService))
 	r.GET("/article/get/:id", handler.GetOneByIdHandler(articleService))
 	r.POST("/auth/login", handler.LoginHandler(userService))
+
+	//Request that need authentification (eg. add article)
+	r.POST("/basket/add", middleware.AuthMiddleware(), handler.AddArticleToBasketHandler(basketService))
 
 	r.Run() // listen and serve on 0.0.0.0:8080
 }

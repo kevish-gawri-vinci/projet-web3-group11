@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"errors"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -21,4 +23,25 @@ func CreateToken(username string) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func VerifyToken(tokenString string) (*jwt.Token, error) {
+	println("Verifying token ", tokenString)
+	//Remove Bearer
+	trimmedToken := strings.TrimPrefix(tokenString, "Bearer ")
+	token, err := jwt.Parse(trimmedToken, func(token *jwt.Token) (interface{}, error) {
+		return secretKey, nil
+	})
+
+	if err != nil {
+		println("Error :", err.Error())
+		return nil, err
+	}
+
+	if !token.Valid {
+		println("Token invalid")
+		return nil, errors.New("Unauthorized")
+	}
+	println("Token validated continuing...")
+	return token, nil
 }
