@@ -14,14 +14,17 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		println("In the auth middleware")
 		tokenString := c.GetHeader("Authorization")
+		if len(tokenString) == 0 {
+			utils.ThrowError(c, &utils.ErrorStruct{Msg: "No token in headers", Code: http.StatusUnauthorized})
+			c.Abort()
+			return
+		}
 
 		// Parse the token
 		token, err := utils.VerifyToken(tokenString)
 
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error": err.Error(),
-			})
+			utils.ThrowError(c, &utils.ErrorStruct{Msg: err.Error(), Code: http.StatusUnauthorized})
 			c.Abort()
 			return
 		}
@@ -30,7 +33,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			c.Set("claims", claims)
 		} else {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			utils.ThrowError(c, &utils.ErrorStruct{Msg: "Unauthorized", Code: http.StatusUnauthorized})
 			c.Abort()
 			return
 		}
