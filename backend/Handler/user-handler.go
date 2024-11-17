@@ -39,12 +39,13 @@ func LoginHandler(userService service.UserService) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Bad Input"})
 			return
 		}
-		result, err := userService.Login(inputRequest)
+		result, err, token := userService.Login(inputRequest)
+
 		if err != nil {
 			c.Error(err)
-			return 
+			return
 		}
-
+		c.Header("Authorization", "Bearer "+token)
 		c.JSON(http.StatusAccepted, gin.H{
 			"message": result,
 		})
