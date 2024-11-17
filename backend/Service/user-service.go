@@ -5,14 +5,13 @@ import (
 	request "backend/Request"
 	utils "backend/Utils"
 	"errors"
-	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
 type UserService interface {
-	AddUser(request.UserRequest) entity.User
+	AddUser(request.UserRequest) (entity.User, error)
 	Login(request.UserRequest) (entity.User, error, string)
 }
 
@@ -21,12 +20,19 @@ type userService struct {
 }
 
 // AddUser implements UserService.
-func (u *userService) AddUser(addedUser request.UserRequest) entity.User {
+func (u *userService) AddUser(addedUser request.UserRequest) (entity.User, error) {
 	print("Called adduser")
 	db := u.DB
 	var user entity.User
-	db.First(&user)
-	return user
+
+	if err := db.Create(&entity.User{
+		Username: addedUser.Username,
+		Password: addedUser.Password,
+	}).Error; err != nil {
+		return entity.User{}, err
+	}
+
+	return user, nil
 }
 
 // Login implements UserService.
@@ -40,11 +46,8 @@ func (u *userService) Login(requestInput request.UserRequest) (entity.User, erro
 	}
 
 	//Check if the password is correct or not
-	res := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(requestInput.Password))
-	println(res == nil)
-
-	if res != nil {
-		return user, fmt.Errorf("Password or email not found"), ""
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(requestInput.Password)); err != nil {
+		return entity.User{}, errors.New("incorrect password"), ""
 	}
 
 	//Generate JWT Token

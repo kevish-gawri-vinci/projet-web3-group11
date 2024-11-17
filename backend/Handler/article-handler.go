@@ -11,7 +11,16 @@ import (
 
 func GetAllHandler(articleService service.ArticleService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		response := articleService.GetAll()
+		response, err := articleService.GetAll()
+
+		if err != nil {
+			fmt.Println("Erreur : ", err)
+            ctx.JSON(http.StatusInternalServerError, gin.H{
+                "error": "Echec de récupération des articles",
+            })
+            return
+		}
+
 		fmt.Println(response[0])
 		ctx.JSON(http.StatusOK, gin.H{
 			"response": response,
@@ -25,16 +34,16 @@ func GetOneByIdHandler(articleService service.ArticleService) gin.HandlerFunc {
 		id, err := strconv.Atoi(rawId)
 		print("The converted int ", id)
 		if err != nil || id == 0 {
-			fmt.Errorf("Erreur dans la conversion du paramètre id")
+			fmt.Println("Erreur : ", err)
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": "Bad Request",
 			})
 			return
 		}
 
-		article := articleService.GetOneById(id)
+		article, err := articleService.GetOneById(id)
 		if article.ID == 0 {
-			fmt.Errorf("Aucun article trouvé")
+			fmt.Println("Erreur :", err)
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": "Aucun article trouvé",
 			})
