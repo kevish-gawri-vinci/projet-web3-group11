@@ -5,8 +5,8 @@ import { UserContext } from '../Context/UserContext';  // Assurez-vous que le ch
 const ProtectedRoute = ({ role, children }) => {
     const { user } = useContext(UserContext);
 
-    if (!user || user.role !== role) {
-        return <p>Access Forbidden</p>;
+    if (!auth.isAuthenticated || auth.role !== role) {
+        return <Navigate to="/login" />;
     }
 
     return children;

@@ -1,14 +1,41 @@
 // src/UserContext.js
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from "react";
 
 export const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState(null); // Exemple d'état utilisateur
+export const AuthProvider = ({ children }) => {
+  const [auth, setAuth] = useState({
+    isAuthenticated: false,
+    role: "guest", // "guest", "user", "admin"
+    loading: true,
+  });
 
-    return (
-        <UserContext.Provider value={{ user, setUser }}>
-            {children}
-        </UserContext.Provider>
-    );
+  useEffect(() => {
+    // Appel à l'API pour récupérer le rôle
+    axios
+      .get("/api/user-role", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((response) => {
+        setAuth({
+          isAuthenticated: true,
+          role: response.data.is_admin ? "admin" : "user",
+        });
+      })
+      .catch(() => {
+        setAuth({ isAuthenticated: false, role: "guest" });
+      });
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Supprime le token
+    setAuth({ isAuthenticated: false, role: "guest" }); // Réinitialise l'état
+  };
+  return (
+    <AuthContext.Provider value={{ auth, setAuth, handleLogout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
