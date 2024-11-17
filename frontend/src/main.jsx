@@ -1,10 +1,14 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
-import Index from './Components/Index/Index'
 import NavBar from './Components/NavBar/NavBar'
 import { RouterProvider, createBrowserRouter, Outlet } from 'react-router-dom'
+import App from './Components/App/App'
 import Signup from './Components/User/Signup/Signup'
+import HomePage from './Components/Pages/HomePage'
+import AddArticlePage from './Components/Pages/AddArticlePage'
+import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute'
+import ArticleWithId from './Components/Article/ArticleWithId'
+
 
 const RootLayout = () => (
   <>
@@ -16,10 +20,17 @@ const RootLayout = () => (
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout />,  // Utilise RootLayout pour afficher NavBar sur toutes les pages
+    element: <App />,  // Utilise RootLayout pour afficher NavBar sur toutes les pages
     children: [
-      { path: "/", element: <Index /> },
-      { path: "/signup", element: <Signup /> }
+      { path: "/", element: <HomePage /> },
+      { path: "/:articleId", element: <ArticleWithId /> },
+      { path: "/signup", element: <Signup /> },
+      /*{ path: "/add-article", element:(
+        <ProtectedRoute role="admin">
+          <AddArticlePage />  
+        </ProtectedRoute>
+        )
+      }*/
     ]
   }
 ])

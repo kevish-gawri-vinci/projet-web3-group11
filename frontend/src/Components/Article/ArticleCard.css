@@ -1,0 +1,82 @@
+/* Styles généraux pour la carte */
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    margin: 20px auto;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+.card-body {
+    padding: 16px;
+    text-align: center;
+}
+
+/* Styles pour l'image */
+.card-img-top {
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Conteneur pour les boutons */
+.card-body > div > div {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Boutons pour changer d'image */
+.card-body button {
+    border: none;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.card-body button:hover {
+    background-color: #0056b3;
+}
+
+.card-body button:active {
+    background-color: #003f7f;
+}
+
+/* Titre et texte */
+.card-title {
+    font-size: 1.25em;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.card-text {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+/* Section des scores et prix */
+.card-body > div h6 {
+    display: inline-block;
+    margin: 5px 10px;
+    font-size: 1em;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Adaptation aux écrans mobiles */
+@media (max-width: 480px) {
+    .card {
+        max-width: 100%;
+    }
+
+    .card-body button {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+}
