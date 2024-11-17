@@ -5,6 +5,7 @@ import (
 	request "backend/Request"
 	utils "backend/Utils"
 	"errors"
+	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -43,7 +44,7 @@ func (u *userService) Login(requestInput request.UserRequest) (entity.User, erro
 	println(res == nil)
 
 	if res != nil {
-		return user, errors.New("Password or email not found"), ""
+		return user, fmt.Errorf("Password or email not found"), ""
 	}
 
 	//Generate JWT Token

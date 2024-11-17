@@ -40,8 +40,9 @@ func LoginHandler(userService service.UserService) gin.HandlerFunc {
 
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
-				"error": err,
+				"error": err.Error(),
 			})
+			return
 		}
 		c.Header("Authorization", "Bearer "+token)
 		c.JSON(http.StatusAccepted, gin.H{
