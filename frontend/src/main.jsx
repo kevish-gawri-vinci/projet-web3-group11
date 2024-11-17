@@ -8,6 +8,7 @@ import HomePage from './Components/Pages/HomePage'
 import AddArticlePage from './Components/Pages/AddArticlePage'
 import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute'
 import ArticleWithId from './Components/Article/ArticleWithId'
+import Login from './Components/User/Login/LogIn'
 
 
 const RootLayout = () => (
@@ -24,7 +25,9 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/:articleId", element: <ArticleWithId /> },
+      { path: "/login", element: <Login /> },
       { path: "/signup", element: <Signup /> },
+      { path: "/addArticle", element: <AddArticlePage /> },
       /*{ path: "/add-article", element:(
         <ProtectedRoute role="admin">
           <AddArticlePage />  
