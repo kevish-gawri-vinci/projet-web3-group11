@@ -15,10 +15,10 @@ func GetAllHandler(articleService service.ArticleService) gin.HandlerFunc {
 
 		if err != nil {
 			fmt.Println("Erreur : ", err)
-            ctx.JSON(http.StatusInternalServerError, gin.H{
-                "error": "Echec de récupération des articles",
-            })
-            return
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"error": err,
+			})
+			return
 		}
 
 		fmt.Println(response[0])
@@ -45,7 +45,7 @@ func GetOneByIdHandler(articleService service.ArticleService) gin.HandlerFunc {
 		if article.ID == 0 {
 			fmt.Println("Erreur :", err)
 			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": "Aucun article trouvé",
+				"error": err,
 			})
 			return
 		}

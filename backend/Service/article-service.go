@@ -2,13 +2,14 @@ package service
 
 import (
 	entity "backend/Entity"
+	"errors"
 
 	"gorm.io/gorm"
 )
 
 type ArticleService interface {
-	GetAll() []entity.Article
-	GetOneById(int) entity.Article
+	GetAll() ([]entity.Article, error)
+	GetOneById(int) (entity.Article, error)
 }
 
 type articleService struct {
@@ -16,25 +17,28 @@ type articleService struct {
 }
 
 // GetAll implements ArticleService.
-func (a *articleService) GetAll() []entity.Article {
+func (a *articleService) GetAll() ([]entity.Article, error) {
 	db := a.DB
 	var articles []entity.Article
-	db.Find(&articles)
-	return articles
+	result := db.Find(&articles)
+	if result.RowsAffected == 0 || result.Error != nil {
+		return articles, errors.New("Erreur lors de la récupération des articles")
+	}
+	return articles, nil
 }
 
 // GetOneById -> Gets an article of the ID
-func (a *articleService) GetOneById(id int) entity.Article {
+func (a *articleService) GetOneById(id int) (entity.Article, error) {
 	db := a.DB
 	var article entity.Article
 	article.ID = id
 	result := db.First(&article)
 
 	if result.RowsAffected != 1 {
-		return entity.Article{ID: 0}
+		return article, errors.New("Error in getting the article")
 	}
 
-	return article
+	return article, nil
 }
 
 func NewArticleService(db *gorm.DB) ArticleService {
