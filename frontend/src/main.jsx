@@ -9,6 +9,7 @@ import AddArticlePage from './Components/Pages/AddArticlePage'
 import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute'
 import ArticleWithId from './Components/Article/ArticleWithId'
 import Login from './Components/User/Login/LogIn'
+import { AuthProvider } from './Components/Context/UserContext'
 
 
 const RootLayout = () => (
@@ -38,8 +39,10 @@ const router = createBrowserRouter([
   }
 ])
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>
-)
+);

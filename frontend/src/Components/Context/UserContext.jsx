@@ -1,5 +1,7 @@
 // src/UserContext.js
 import React, { createContext, useState, useEffect } from "react";
+import axios from "axios";
+
 
 export const UserContext = createContext();
 
@@ -33,9 +35,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token"); // Supprime le token
     setAuth({ isAuthenticated: false, role: "guest" }); // Réinitialise l'état
   };
+
   return (
-    <AuthContext.Provider value={{ auth, setAuth, handleLogout }}>
+    <UserContext.Provider value={{ auth, setAuth, handleLogout }}>
       {children}
-    </AuthContext.Provider>
+    </UserContext.Provider>
   );
 };
+

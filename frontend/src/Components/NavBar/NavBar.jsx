@@ -4,16 +4,15 @@ import { UserContext } from "../Context/UserContext";
 import React, { useContext } from "react";
 
 const NavBar = () => {
+  const { auth, handleLogout } = useContext(UserContext);
 
-    const { user, handleLogout } = useContext(UserContext);
-
-    return (
-      <>
-      {user.role === "guest" && (
+  return (
+    <>
+      {auth.role === "guest" && (
         <div id="navbar-wrapper">
           <div className="left-section">
             <Link to="/">
-              <button className="navbar-buttons">home</button>
+              <button className="navbar-buttons">Home</button>
             </Link>
           </div>
           <div className="right-section">
@@ -25,42 +24,41 @@ const NavBar = () => {
             </Link>
           </div>
         </div>
-        )}
-      {user.role === "user" && (
+      )}
+      {auth.role === "user" && (
         <div id="navbar-wrapper">
           <div className="left-section">
             <Link to="/">
-              <button className="navbar-buttons">home</button>
+              <button className="navbar-buttons">Home</button>
             </Link>
           </div>
           <div className="right-section">
-            <Link to="/logout">
-              <button className="navbar-buttons">Logout</button>
-            </Link>
+            <button className="navbar-buttons" onClick={handleLogout}>
+              Logout
+            </button>
           </div>
         </div>
       )}
-      {user.role === "admin" && (
+      {auth.role === "admin" && (
         <div id="navbar-wrapper">
           <div className="left-section">
             <Link to="/">
-              <button className="navbar-buttons">home</button>
+              <button className="navbar-buttons">Home</button>
             </Link>
             <Link to="/addArticle">
               <button className="navbar-buttons">Add Articles</button>
             </Link>
           </div>
           <div className="right-section">
-            <Link to="/logout">
-              <button className="navbar-buttons" onClick={handleLogout}>Logout</button>
-            </Link>
+            <button className="navbar-buttons" onClick={handleLogout}>
+              Logout
+            </button>
           </div>
         </div>
       )}
-      </>
+    </>
+  );
+};
 
-    );
-
-  };
 
 export default NavBar;
