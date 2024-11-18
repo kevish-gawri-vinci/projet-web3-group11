@@ -51,7 +51,7 @@ func (u *userService) Login(requestInput request.UserRequest) (entity.User, erro
 	}
 
 	//Generate JWT Token
-	token, err := utils.CreateToken(user.Username)
+	token, err := utils.CreateToken(user.Username, user.ID)
 
 	if err != nil {
 		return user, errors.New("Error during the generation of JWT"), ""

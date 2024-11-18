@@ -10,7 +10,6 @@ import (
 func ErrorHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
-		println("Testststst")
 		if len(c.Errors) > 0 {
 			err := c.Errors.Last()
 			log.Println("Error occurred:", err.Error())
@@ -20,10 +19,12 @@ func ErrorHandler() gin.HandlerFunc {
 				c.JSON(statusCode.(int), gin.H{
 					"error": err.Error(),
 				})
+				c.Abort()
 			} else {
 				c.JSON(http.StatusInternalServerError, gin.H{
 					"error": "Something went wrong",
 				})
+				c.Abort()
 			}
 			return
 		}

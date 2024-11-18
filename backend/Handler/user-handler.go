@@ -10,8 +10,6 @@ import (
 
 func AddUserHandler(userService service.UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		println(c.PostForm("username"))
-		println(c.PostForm("password"))
 		var userRequest request.UserRequest
 		if err := c.ShouldBind(&userRequest); err != nil {
 			c.Error(err)
