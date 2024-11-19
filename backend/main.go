@@ -54,8 +54,8 @@ func main() {
 	//Request that need authentification (eg. add article)
 	/******* BASKETS **********/
 	r.POST("/basket/add", middleware.AuthMiddleware(), handler.AddArticleToBasketHandler(basketService))
-	r.DELETE("/basket/delete-all/:id", middleware.AuthMiddleware(), handler.DeleteBasketHandler(basketService))
-	r.GET("/basket/get/:id", middleware.AuthMiddleware(), handler.GetBasketHandler(basketService))
+	r.DELETE("/basket/delete-all", middleware.AuthMiddleware(), handler.DeleteBasketHandler(basketService))
+	r.GET("/basket/get/", middleware.AuthMiddleware(), handler.GetBasketHandler(basketService))
 	r.PUT("/basket/increase-quantity", middleware.AuthMiddleware(), handler.IncreaseQuantityHandler(basketService))
 	r.PUT("/basket/decrease-quantity", middleware.AuthMiddleware(), handler.DecreaseQuantityHandler(basketService))
 

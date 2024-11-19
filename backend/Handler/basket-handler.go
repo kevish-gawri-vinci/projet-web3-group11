@@ -5,7 +5,6 @@ import (
 	service "backend/Service"
 	utils "backend/Utils"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,6 +13,7 @@ func AddArticleToBasketHandler(basketService service.BasketService) gin.HandlerF
 	return func(ctx *gin.Context) {
 		var req request.BasketArticleRequest
 		ctx.BindJSON(&req)
+		req.UserId = utils.GetUserIdInClaims(ctx)
 		basketItem, err := basketService.AddOneArticle(req)
 		if err != nil {
 			utils.ThrowError(ctx, err)
@@ -27,12 +27,7 @@ func AddArticleToBasketHandler(basketService service.BasketService) gin.HandlerF
 
 func DeleteBasketHandler(basketService service.BasketService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		rawId := ctx.Params.ByName("id")
-		id, err := strconv.Atoi(rawId)
-		if err != nil || id == 0 {
-			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: err.Error(), Code: http.StatusBadRequest})
-			return
-		}
+		id := utils.GetUserIdInClaims(ctx)
 		error := basketService.DeleteBasket(id)
 		if error != nil {
 			utils.ThrowError(ctx, error)
@@ -44,12 +39,7 @@ func DeleteBasketHandler(basketService service.BasketService) gin.HandlerFunc {
 
 func GetBasketHandler(basketService service.BasketService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		rawId := ctx.Params.ByName("id")
-		id, err := strconv.Atoi(rawId)
-		if err != nil || id == 0 {
-			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: err.Error(), Code: http.StatusBadRequest})
-			return
-		}
+		id := utils.GetUserIdInClaims(ctx)
 		basket, error := basketService.GetBasket(id)
 
 		if error != nil {
