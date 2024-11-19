@@ -1,56 +1,89 @@
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import "./ArticleWithId.css";
 
-const ArticleWtihId = ({ Article }) => {
-    const { articleId } = useParams();
-    const [article, setArticle] = useState(null);
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+const ArticleWtihId = () => {
+  const { articleId } = useParams();
+  const [article, setArticle] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [message, setMessage] = useState("");
 
-    useEffect(() => {
-        const selectedArticle = articles.find((a) => a.id === parseInt(articleId));
-        setArticle(selectedArticle);
-    }, [articleId, articles]);
-
-    const nextImage = () => {
-        setCurrentImageIndex((prevIndex) =>
-            (prevIndex + 1) % article.imageUrls.length
+  useEffect(() => {
+    // Appel au backend pour récupérer l'article
+    const fetchArticle = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/article/get/${articleId}`
         );
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP : ${response.status}`);
+        }
+        const data = await response.json();
+        setArticle(data.response);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    const prevImage = () => {
-        setCurrentImageIndex((prevIndex) =>
-            (prevIndex - 1 + article.imageUrls.length) % article.imageUrls.length
-        );
-    };
+    fetchArticle();
+  }, [articleId]);
 
-    if (!article) {
-        return <p>Chargement...</p>;
+  const addToBasket = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/basket/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(article), // Envoi de l'article complet
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de l'ajout au panier.");
+      }
+
+      setMessage("Article ajouté au panier avec succès !");
+    } catch (err) {
+      setMessage(`Erreur : ${err.message}`);
     }
+  };
 
-    return (
-        <div className="card">
-            <div className='card-body'>
-                <div>
-                    {article.imageUrls && article.imageUrls.length > 0 && (
-                        <img
-                            src={article.imageUrls[currentImageIndex]}
-                            alt={article.title}
-                            className="card-img-top"
-                        />
-                    )}
-                    <div>
-                        <button onClick={prevImage}></button>
-                        <button onClick={nextImage}></button>
-                    </div>
-                </div>
-                <h5 className="card-title">{article.title}</h5>
-                <p className="card-text">{article.description}</p>
-                <div>
-                    <h6>{article.score}</h6>
-                    <h6>{article.prix}</h6>
-                </div>     
-            </div>
+  if (isLoading) {
+    return <p>Chargement...</p>;
+  }
+
+  if (error) {
+    return <p>Erreur : {error}</p>;
+  }
+
+  if (!article) {
+    return <p>Aucun article trouvé.</p>;
+  }
+
+  return (
+    <div className="card">
+      <div className="card-body">
+        <div>
+          <img
+            src={article.imgurl} // Affiche la première (et unique) image
+            alt={article.name} // Remplacer `article.name` par `article.title` si nécessaire
+            className="card-img-top"
+          />
         </div>
-    );
-}
+        <h5 className="card-title">{article.name}</h5>
+        <p className="card-text">{article.description}</p>
+        <div>
+          <h6>{article.price}</h6>
+        </div>
+      </div>
+      <div>
+        <button onClick={addToBasket}>Add Panier</button>
+      </div>
+      {message && <p>{message}</p>}{" "}
+    </div>
+  );
+};
 export default ArticleWtihId;

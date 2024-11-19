@@ -10,6 +10,7 @@ import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute'
 import ArticleWithId from './Components/Article/ArticleWithId'
 import Login from './Components/User/Login/LogIn'
 import { AuthProvider } from './Components/Context/UserContext'
+import Panier from './Components/Panier/Panier'
 
 
 const RootLayout = () => (
