@@ -14,7 +14,7 @@ import (
 type BasketService interface {
 	AddOneArticle(request.BasketArticleRequest) (entity.BasketItem, *utils.ErrorStruct)
 	DeleteBasket(int) *utils.ErrorStruct
-	GetBasket(int) (entity.Basket, *utils.ErrorStruct)
+	GetBasket(int) (entity.FullBasket, *utils.ErrorStruct)
 	IncreaseQuantity(request.BasketArticleRequest) *utils.ErrorStruct
 	DecreaseQuantity(request.BasketArticleRequest) *utils.ErrorStruct
 }
@@ -66,31 +66,37 @@ func (b *basketService) DeleteBasket(id int) *utils.ErrorStruct {
 	return nil
 }
 
-func (b *basketService) GetBasket(id int) (entity.Basket, *utils.ErrorStruct) {
+func (b *basketService) GetBasket(id int) (entity.FullBasket, *utils.ErrorStruct) {
 	db := b.DB
 	basketItems := []entity.BasketItem{}
 	result := db.Where("user_id = ?", id).Find(&basketItems)
 	println("In the service of GetBasket")
 	if result.Error != nil {
-		return entity.Basket{}, &utils.ErrorStruct{Msg: result.Error.Error(), Code: http.StatusInternalServerError}
+		return entity.FullBasket{}, &utils.ErrorStruct{Msg: result.Error.Error(), Code: http.StatusInternalServerError}
 	}
 
 	if result.RowsAffected == 0 {
-		return entity.Basket{}, &utils.ErrorStruct{Msg: "User does not have a basket or invalid user id", Code: http.StatusBadRequest}
+		return entity.FullBasket{}, nil
 	}
+	var articleArray []entity.BasketDetail
 	var totalPrice float32
 	println("Size of articles ", len(basketItems))
 	for i := 0; i < len(basketItems); i++ {
+		//For each basket row have one BasketDetail
 		article := entity.Article{ID: basketItems[i].ArticleId}
 		db.Find(&article)
-		totalPrice += float32(article.Price * float32(basketItems[i].Quantity))
+		lineQuantity := basketItems[i].Quantity
+		linePrice := float32(article.Price * float32(lineQuantity))
+		basketDetail := entity.BasketDetail{ArticleDetail: article, LinePrice: linePrice, Quantity: lineQuantity}
+		totalPrice += linePrice
+		articleArray = append(articleArray, basketDetail)
 	}
-	basket := entity.Basket{
-		Articles:   basketItems,
-		TotalPrice: float32(totalPrice),
+	fullBasket := entity.FullBasket{
 		UserId:     id,
+		Articles:   articleArray,
+		TotalPrice: totalPrice,
 	}
-	return basket, nil
+	return fullBasket, nil
 }
 
 func (b *basketService) IncreaseQuantity(req request.BasketArticleRequest) *utils.ErrorStruct {

@@ -13,6 +13,8 @@ func AddArticleToBasketHandler(basketService service.BasketService) gin.HandlerF
 	return func(ctx *gin.Context) {
 		var req request.BasketArticleRequest
 		ctx.BindJSON(&req)
+		userId := utils.GetUserIdInClaims(ctx)
+		req.UserId = userId
 		req.UserId = utils.GetUserIdInClaims(ctx)
 		basketItem, err := basketService.AddOneArticle(req)
 		if err != nil {
@@ -56,6 +58,8 @@ func IncreaseQuantityHandler(basketService service.BasketService) gin.HandlerFun
 	return func(ctx *gin.Context) {
 		var req request.BasketArticleRequest
 		ctx.BindJSON(&req)
+		userId := utils.GetUserIdInClaims(ctx)
+		req.UserId = userId
 		error := basketService.IncreaseQuantity(req)
 		if error != nil {
 			utils.ThrowError(ctx, error)
@@ -71,7 +75,8 @@ func DecreaseQuantityHandler(basketService service.BasketService) gin.HandlerFun
 	return func(ctx *gin.Context) {
 		var req request.BasketArticleRequest
 		ctx.BindJSON(&req)
-
+		userId := utils.GetUserIdInClaims(ctx)
+		req.UserId = userId
 		//If Quantity is 0
 		if req.Quantity == 0 {
 			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: "Invalid quantity", Code: http.StatusBadRequest})

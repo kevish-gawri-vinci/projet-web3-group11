@@ -28,9 +28,11 @@ const Signup = () => {
                 navigate("/login");
             } else {
                 // Gérer les erreurs ici
-                console.log("Erreur lors de la création de l'utilisateur");
+                console.log("Erreur lors de la création de l'utilisateur ");
+                alert("An error occured please retry")
             }
         } catch (error) {
+            alert("An error occured please retry "+ error)
             console.log("Une erreur est survenue :", error);
         }
     };

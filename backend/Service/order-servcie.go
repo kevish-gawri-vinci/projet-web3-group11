@@ -39,7 +39,7 @@ func (o *orderService) FinaliseBasket(userId int) (entity.Order, *utils.ErrorStr
 	//For each line of the basket, create an orderLine
 	articles := basket.Articles
 	for i := 0; i < len(articles); i++ {
-		orderLine := entity.OrderLine{OrderId: order.ID, Quantity: articles[i].Quantity, ArticleId: articles[i].ArticleId}
+		orderLine := entity.OrderLine{OrderId: order.ID, Quantity: articles[i].Quantity, ArticleId: articles[i].ArticleDetail.ID}
 		result := db.Create(&orderLine)
 		if result.Error != nil {
 			errorToThrow := &utils.ErrorStruct{Msg: "Error while adding the article in order", Code: http.StatusInternalServerError}
