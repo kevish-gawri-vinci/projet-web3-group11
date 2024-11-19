@@ -45,9 +45,11 @@ const App = () => {
     // Simulation de chargement des articles par défaut
     const simulateFetch = async () => {
       try {
+
         // Ajout d'un délai simulé pour le chargement
-        await new Promise(resolve => setTimeout(resolve, 500)); 
-        setArticles(defaultArticles);
+        // await new Promise(resolve => setTimeout(resolve, 500)); 
+        let response = await axios.get("http://localhost:8080/article/getall");
+        setArticles(response.data.response);
       } catch (err) {
         console.error('Erreur simulée :', err);
         setError(err);
