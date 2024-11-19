@@ -11,6 +11,7 @@ import (
 type ArticleService interface {
 	GetAll() ([]entity.Article, *utils.ErrorStruct)
 	GetOneById(int) (entity.Article, *utils.ErrorStruct)
+	AddArticle(req entity.Article) *utils.ErrorStruct
 }
 
 type articleService struct {
@@ -40,6 +41,17 @@ func (a *articleService) GetOneById(id int) (entity.Article, *utils.ErrorStruct)
 	}
 
 	return article, nil
+}
+
+func (a *articleService) AddArticle(req entity.Article) *utils.ErrorStruct {
+	db := a.DB
+	result := db.Create(&req)
+
+	if result.RowsAffected != 1 {
+		return &utils.ErrorStruct{Msg: "Could not add the article", Code: http.StatusNotFound}
+	}
+
+	return nil
 }
 
 func NewArticleService(db *gorm.DB) ArticleService {

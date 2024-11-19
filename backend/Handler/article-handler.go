@@ -1,6 +1,7 @@
 package handler
 
 import (
+	entity "backend/Entity"
 	service "backend/Service"
 	utils "backend/Utils"
 	"fmt"
@@ -45,5 +46,25 @@ func GetOneByIdHandler(articleService service.ArticleService) gin.HandlerFunc {
 		ctx.JSON(http.StatusOK, gin.H{
 			"response": article,
 		})
+	}
+}
+
+func AddArticleHandler(articleService service.ArticleService) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		//Request article is the same as entity article to go in gorm so I will take the same
+		var req entity.Article
+		errorInBind := ctx.ShouldBind(&req)
+		println(req.Name, req.Description, req.ImgUrl, float32(req.Price))
+		if errorInBind != nil {
+			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: "Bad input", Code: http.StatusBadRequest})
+			return
+		}
+		err := articleService.AddArticle(req)
+		if err != nil {
+			utils.ThrowError(ctx, err)
+			return
+		}
+		ctx.JSON(http.StatusCreated, gin.H{})
+		return
 	}
 }

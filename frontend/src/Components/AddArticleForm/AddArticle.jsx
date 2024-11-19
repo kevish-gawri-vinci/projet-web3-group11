@@ -3,16 +3,23 @@ import axios from "axios";
 import "./AddArticle.css";
 
 const AddArticle = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [image, setImage] = useState("");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [imgurl, setImgUrl] = useState("");
+  const [price, setPrice] = useState(0);
   const [message, setMessage] = useState(null);
 
   const addArticle = async (e) => {
     e.preventDefault();
     try {
-      const newArticle = { title, content, author };
-      await axios.post("http://localhost:8080/articles", newArticle);
+      console.log(price)
+      const priceInFloat = parseFloat(price)
+      console.log(priceInFloat)
+      const newArticle = { name, description, imgurl, price: priceInFloat };
+      await axios.post("http://localhost:8080/article/add",newArticle, {
+          headers: {Authorization: localStorage.getItem("token")}
+        }
+      )
       setMessage("Article added successfully");
     } catch (err) {
       setMessage("Failed to add article");
@@ -24,29 +31,24 @@ const AddArticle = () => {
       <form onSubmit={addArticle}>
         <input
           type="text"
-          placeholder="Title"
-          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Name"
+          onChange={(e) => setName(e.target.value)}
         />
         <input
           type="text"
           placeholder="Content"
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => setDescription(e.target.value)}
         />
         <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setImage(e.target.files[0])}
+          type="text"
+          placeholder="URL of the image"
+          onChange={(e) => setImgUrl(e.target.value)}
         />
-        {image && (
-          <div>
-            <p>Image Preview:</p>
-            <img
-              src={URL.createObjectURL(image)}
-              alt="Preview"
-              style={{ maxWidth: "100%", height: "auto" }}
-            />
-          </div>
-        )}
+        <input
+          type="text"
+          placeholder="Price"
+          onChange={(e) => setPrice(e.target.value)}
+        />
         <button type="submit">Add Article</button>
       </form>
       <h3>{message}</h3>
