@@ -43,7 +43,7 @@ func main() {
 	})
 
 	/*************** USER **************/
-	r.POST("/adduser", handler.AddUserHandler(userService))
+	r.POST("/auth/signup", handler.AddUserHandler(userService))
 	r.POST("/auth/login", handler.LoginHandler(userService))
 	r.GET("/auth/user-role", middleware.AuthMiddleware(), handler.GetRoleHandler(userService)) //Auth
 

@@ -12,7 +12,7 @@ import (
 )
 
 type UserService interface {
-	AddUser(request.UserRequest) (entity.User, error)
+	AddUser(request.UserRequest) (entity.User, *utils.ErrorStruct)
 	Login(request.UserRequest) (entity.User, error, string)
 	GetUserRole(userId int) (bool, *utils.ErrorStruct)
 }
@@ -22,16 +22,21 @@ type userService struct {
 }
 
 // AddUser implements UserService.
-func (u *userService) AddUser(addedUser request.UserRequest) (entity.User, error) {
+func (u *userService) AddUser(addedUser request.UserRequest) (entity.User, *utils.ErrorStruct) {
 	print("Called adduser")
 	db := u.DB
 	var user entity.User
 
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(addedUser.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return entity.User{}, &utils.ErrorStruct{Msg: "Bcrypt error : " + err.Error(), Code: http.StatusInternalServerError}
+	}
+
 	if err := db.Create(&entity.User{
 		Username: addedUser.Username,
-		Password: addedUser.Password,
+		Password: string(hashPassword),
 	}).Error; err != nil {
-		return entity.User{}, err
+		return entity.User{}, &utils.ErrorStruct{Msg: "DB error : " + err.Error(), Code: http.StatusInternalServerError}
 	}
 
 	return user, nil

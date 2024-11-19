@@ -17,11 +17,11 @@ export const AuthProvider = ({ children }) => {
     axios
       .get("http://localhost:8080/auth/user-role", {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `${localStorage.getItem("token")}`,
         },
       })
       .then((response) => {
-        console.log("dzfjdef " + response.data)
+        console.log("dzfjdef " + response.data.is_admin)
         setAuth({
           isAuthenticated: true,
           role: response.data.is_admin ? "admin" : "user",
