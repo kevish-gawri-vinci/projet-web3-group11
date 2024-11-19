@@ -7,6 +7,7 @@ import (
 	service "backend/Service"
 	"fmt"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,16 +27,29 @@ func main() {
 	r := gin.Default()
 	r.Use(middleware.ErrorHandler())
 
+	//Cors option
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"},                   // React frontend URL (adjust if different)
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},            // Allowed HTTP methods
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Allowed headers
+		AllowCredentials: true,                                                // Allow cookies and credentials
+	}))
+
 	r.GET("/ping", func(c *gin.Context) {
 		println(c.Query("id"))
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
 	})
+
+	/*************** USER **************/
 	r.POST("/adduser", handler.AddUserHandler(userService))
+	r.POST("/auth/login", handler.LoginHandler(userService))
+	r.GET("/auth/user-role", middleware.AuthMiddleware(), handler.GetRoleHandler(userService)) //Auth
+
+	/****** ARTICLES *********/
 	r.GET("/article/getall", handler.GetAllHandler(articleService))
 	r.GET("/article/get/:id", handler.GetOneByIdHandler(articleService))
-	r.POST("/auth/login", handler.LoginHandler(userService))
 
 	//Request that need authentification (eg. add article)
 	/******* BASKETS **********/

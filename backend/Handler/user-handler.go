@@ -3,6 +3,7 @@ package handler
 import (
 	request "backend/Request"
 	service "backend/Service"
+	utils "backend/Utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -46,6 +47,28 @@ func LoginHandler(userService service.UserService) gin.HandlerFunc {
 		c.Header("Authorization", "Bearer "+token)
 		c.JSON(http.StatusAccepted, gin.H{
 			"message": result,
+		})
+	}
+}
+
+func GetRoleHandler(userService service.UserService) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		//User is already authentified => authmiddleware
+		userId := utils.GetUserIdInClaims(ctx)
+		println("User id is ", userId)
+		if userId == 0 {
+			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: "Error: no ID found in claims"})
+		}
+		role, err := userService.GetUserRole(userId)
+		if err != nil {
+			ctx.JSON(err.Code, gin.H{
+				"error": err.Msg,
+			})
+			return
+		}
+		println("is admin ", role)
+		ctx.JSON(200, gin.H{
+			"is_admin": role,
 		})
 	}
 }
