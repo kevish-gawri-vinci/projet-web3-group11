@@ -29,14 +29,14 @@ func main() {
 
 	//Cors option
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"},                   // React frontend URL (adjust if different)
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},            // Allowed HTTP methods
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Allowed headers
-		AllowCredentials: true,                                                // Allow cookies and credentials
+		AllowOrigins:     []string{"http://localhost:5173"},                   // URL du frontend React
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},            // Méthodes HTTP autorisées
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // En-têtes autorisés
+		ExposeHeaders:    []string{"Authorization"},                           // En-têtes à exposer pour la lecture côté client
+		AllowCredentials: true,                                                // Autoriser les cookies et les informations d'identification
 	}))
 
 	r.GET("/ping", func(c *gin.Context) {
-		println(c.Query("id"))
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
