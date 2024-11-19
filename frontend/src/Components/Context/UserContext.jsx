@@ -15,12 +15,13 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Appel à l'API pour récupérer le rôle
     axios
-      .get("/api/user-role", {
+      .get("http://localhost:8080/auth/user-role", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
       .then((response) => {
+        console.log("dzfjdef " + response.data)
         setAuth({
           isAuthenticated: true,
           role: response.data.is_admin ? "admin" : "user",

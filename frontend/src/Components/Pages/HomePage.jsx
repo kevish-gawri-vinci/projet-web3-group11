@@ -6,7 +6,8 @@ import { useOutletContext } from "react-router-dom";
 const HomePage = () => {
 
     const {articles} = useOutletContext();
-    
+    console.log( "in Homepage " +  typeof(articles))
+    console.log(articles)
     return (
         <div>
             <h1>Home Page</h1>
