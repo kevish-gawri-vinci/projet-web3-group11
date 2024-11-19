@@ -5,6 +5,7 @@ import (
 	request "backend/Request"
 	utils "backend/Utils"
 	"errors"
+	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -13,6 +14,7 @@ import (
 type UserService interface {
 	AddUser(request.UserRequest) (entity.User, error)
 	Login(request.UserRequest) (entity.User, error, string)
+	GetUserRole(userId int) (bool, *utils.ErrorStruct)
 }
 
 type userService struct {
@@ -51,13 +53,23 @@ func (u *userService) Login(requestInput request.UserRequest) (entity.User, erro
 	}
 
 	//Generate JWT Token
-	token, err := utils.CreateToken(user.Username, user.ID)
+	token, err := utils.CreateToken(user.Username, user.ID, user.IsAdmin)
 
 	if err != nil {
 		return user, errors.New("Error during the generation of JWT"), ""
 	}
 
 	return user, nil, token
+}
+
+func (u *userService) GetUserRole(userId int) (bool, *utils.ErrorStruct) {
+	db := u.DB
+	user := entity.User{ID: userId}
+	result := db.First(&user)
+	if result.Error != nil || result.RowsAffected == 0 {
+		return false, &utils.ErrorStruct{Msg: "Error : no user found", Code: http.StatusNotFound}
+	}
+	return user.IsAdmin, nil
 }
 
 func NewUserService(db *gorm.DB) UserService {
