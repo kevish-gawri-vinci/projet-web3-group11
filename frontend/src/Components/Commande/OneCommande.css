@@ -1,29 +1,58 @@
 .articles-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    justify-content: center;
   }
   
-  .article-card {
-    border: 1px solid #ccc;
-    padding: 15px;
-    border-radius: 8px;
-    width: 300px;
-    text-align: center;
-  }
-  
-  .article-image {
+  .orderid-card {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr 2fr;
+    align-items: center;
     width: 100%;
-    height: auto;
+    border: 1px solid grey;
     border-radius: 5px;
+    width: 95%;
+    margin-top: 10px;
+
+  }
+
+  .orderid-totalPrice{
+    font-weight: bolder;
+    font-size: 24px;
+    justify-self: center;
+  }
+
+  .article-info{
+    justify-self: center;
+    align-items: center;
+  }
+
+  .article-info h2{
+    justify-self: center;
+  }
+
+  .orderid-image {
+    height: 80px;
+    width: 120px;
+    margin: 0;
+    align-self: center;
+    justify-self: center;
+  }
+
+  #ordertotal-wrapper{
+    display: flex;
+    width: 60%;
+    font-size: 30px;
+    font-weight: bolder;
+    float: right;
+    justify-content: space-around;
+  }
+
+  #separator{
+    margin-top: 10px;
+    border-top: 2px solid black;
+    width: 100%;
   }
   
-  .article-info h2 {
-    font-size: 18px;
-    margin: 10px 0;
-  }
-  
-  .article-info p {
-    margin: 5px 0;
-  }
+
   

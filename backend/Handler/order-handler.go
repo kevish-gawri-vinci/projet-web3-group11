@@ -35,11 +35,13 @@ func GetOrderHandler(orderService service.OrderService) gin.HandlerFunc {
 			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: err.Error(), Code: http.StatusBadRequest})
 			return
 		}
+		userId := utils.GetUserIdInClaims(ctx)
 
-		fullOrder, errorToThrow := orderService.GetOrder(id)
+		fullOrder, errorToThrow := orderService.GetOrder(id, userId)
 
 		if errorToThrow != nil {
 			utils.ThrowError(ctx, errorToThrow)
+			return
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import "./Commande.css";
+import "./OneCommande.css";
 
 const Commande = () => {
   const { orderId } = useParams();
@@ -24,9 +24,10 @@ const Commande = () => {
       }
 
       const data = await response.json();
-      setData(data.response.articles);
+      setData(data.response);
       setIsLoading(false); // Indique que le chargement est terminé
     } catch (err) {
+      console.log("e ", err)
       setError(err);
       setIsLoading(false);
     }
@@ -45,25 +46,33 @@ const Commande = () => {
   if (data == null || data.length === 0) {
     return <p>Aucun article dans le panier.</p>;
   }
+  console.log(data)
   return (
     <div>
-      <h1>Commande</h1>
+      <h1>Commande #{data.orderid}</h1>
       <div className="articles-container">
-        {data.map((article) => (
-          <div className="article-card" key={article.articledetail.id}>
+        {data.articles.map((article) => (
+          <div className="orderid-card" key={article.articledetail.id}>
             <img
               src={article.articledetail.imgurl}
               alt={article.articledetail.name}
-              className="article-image"
+              className="orderid-image"
             />
             <div className="article-info">
               <h2>{article.articledetail.name}</h2>
               <p>{article.articledetail.description}</p>
-              <p>Quantité : {article.articleline.quantity}</p>
-              <p>Prix total : {article.articleline.price.toFixed(2)} $</p>
-            </div>
+            </div>  
+              <p className="orderid-quantity">Quantité : {article.articleline.quantity}</p>
+              <p className="orderid-priceOne">Prix unitaire : {article.articledetail.price}</p>
+              <p className="orderid-totalPrice">Prix total : {article.articleline.price.toFixed(2)} $</p>
+            
           </div>
         ))}
+      </div>
+      <div id="separator"></div>
+      <div id="ordertotal-wrapper">
+        <p id="ordertotal-title">Total de la commande</p>
+        <p id="ordertotal-quantity">{data.totalprice.toFixed(2)} $</p>
       </div>
     </div>
   );

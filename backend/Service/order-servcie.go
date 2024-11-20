@@ -11,7 +11,7 @@ import (
 type OrderService interface {
 	FinaliseBasket(int) (entity.Order, *utils.ErrorStruct)
 	GetAllOrders(int) ([]entity.OrderListLine, *utils.ErrorStruct)
-	GetOrder(int) (entity.FullOrder, *utils.ErrorStruct)
+	GetOrder(int, int) (entity.FullOrder, *utils.ErrorStruct)
 }
 
 type orderService struct {
@@ -102,7 +102,7 @@ func (o *orderService) GetAllOrders(userId int) ([]entity.OrderListLine, *utils.
 }
 
 // GetOrder implements OrderService.
-func (o *orderService) GetOrder(orderId int) (entity.FullOrder, *utils.ErrorStruct) {
+func (o *orderService) GetOrder(orderId int, userId int) (entity.FullOrder, *utils.ErrorStruct) {
 	db := o.DB
 	//Get every order line of that orderId
 	var orderLines []entity.OrderLine
@@ -120,10 +120,20 @@ func (o *orderService) GetOrder(orderId int) (entity.FullOrder, *utils.ErrorStru
 	var orderDetails []entity.OrderDetail
 	var totalOrderPrice float32 = 0.0
 	for i := 0; i < len(orderLines); i++ {
+		//Check if the order is the order of the userID
+		order := entity.Order{ID: orderLines[i].OrderId}
+		result := db.Find(&order)
+		if result.Error != nil {
+			errrorToThrow := &utils.ErrorStruct{Msg: result.Error.Error(), Code: http.StatusInternalServerError}
+			return entity.FullOrder{}, errrorToThrow
+		}
+		if order.UserId != userId {
+			return entity.FullOrder{}, &utils.ErrorStruct{Msg: "Unauthorized", Code: http.StatusUnauthorized}
+		}
 		var orderDetail entity.OrderDetail
 		var article entity.Article = entity.Article{ID: orderLines[i].ArticleId}
 		var articleLine entity.ArticleLine = entity.ArticleLine{ArticleId: orderLines[i].ArticleId, Quantity: orderLines[i].Quantity}
-		result := db.Find(&article)
+		result = db.Find(&article)
 		if result.Error != nil {
 			errrorToThrow := &utils.ErrorStruct{Msg: result.Error.Error(), Code: http.StatusInternalServerError}
 			return entity.FullOrder{}, errrorToThrow
