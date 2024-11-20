@@ -131,4 +131,4 @@ dist
 
 # Database config
 backend/Database/config.go
-backend/Database/db_variables.go
+# backend/Database/db_variables.go
