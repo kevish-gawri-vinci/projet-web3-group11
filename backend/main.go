@@ -61,7 +61,7 @@ func main() {
 	r.PUT("/basket/decrease-quantity", middleware.AuthMiddleware(), handler.DecreaseQuantityHandler(basketService))
 
 	/******* ORDERS **********/
-	r.POST("/order/finalise", middleware.AuthMiddleware(), handler.FinaliseBasketHandler(orderService))
+	r.POST("/order/finalize", middleware.AuthMiddleware(), handler.FinaliseBasketHandler(orderService))
 	r.GET("/order/get/:id", middleware.AuthMiddleware(), handler.GetOrderHandler(orderService))
 	r.GET("/order/getall", middleware.AuthMiddleware(), handler.GetAllOrdersHandler(orderService))
 
