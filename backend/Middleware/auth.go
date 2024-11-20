@@ -41,3 +41,16 @@ func AuthMiddleware() gin.HandlerFunc {
 		c.Next() // Proceed to the next handler if authorized
 	}
 }
+
+func AdminMiddleware() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		println("Check if user is admin ")
+		isAdmin := utils.GetUserRoleInClaims(ctx)
+		if isAdmin {
+			ctx.Next()
+		} else {
+			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: "User is not admin", Code: http.StatusUnauthorized})
+			ctx.Abort()
+		}
+	}
+}

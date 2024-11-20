@@ -50,7 +50,7 @@ func main() {
 	/****** ARTICLES *********/
 	r.GET("/article/getall", handler.GetAllHandler(articleService))
 	r.GET("/article/get/:id", handler.GetOneByIdHandler(articleService))
-	r.POST("/article/add", middleware.AuthMiddleware(), handler.AddArticleHandler(articleService))
+	r.POST("/article/add", middleware.AuthMiddleware(), middleware.AdminMiddleware(), handler.AddArticleHandler(articleService)) //Auth + admin
 
 	//Request that need authentification (eg. add article)
 	/******* BASKETS **********/

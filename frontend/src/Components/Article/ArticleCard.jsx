@@ -20,7 +20,7 @@ const ArticleCard = ({ article }) => {
             <h6>{article.price} $</h6>
           </div>
         </div>
-      </Link>6
+      </Link>
     </div>
   );
 };

@@ -32,6 +32,9 @@ const NavBar = () => {
               <button className="navbar-buttons">Home</button>
             </Link>
           </div>
+          <div className="center-section">
+              <p>Hello {auth.username}</p>
+          </div>
           <div className="right-section">
             <Link to="/panier">
               <button className="navbar-buttons">Panier</button>

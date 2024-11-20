@@ -19,13 +19,12 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:8080/auth/login", { username:email, password })
-      ;
+      const res = await axios.post("http://localhost:8080/auth/login", { username:email, password });
       // Save the Token in the localstorage
       localStorage.setItem("token", res.headers['authorization'])
       res.data && window.location.replace("/");
     } catch (err) {
-      setError(err.response?.data || "An error occurred.");
+      setError(err.response?.data.error || "An error occurred.");
     } finally {
       setLoading(false);
     }

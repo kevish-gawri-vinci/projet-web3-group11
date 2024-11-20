@@ -35,13 +35,13 @@ func LoginHandler(userService service.UserService) gin.HandlerFunc {
 		var inputRequest request.UserRequest
 
 		if err := c.BindJSON(&inputRequest); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Bad Input"})
+			utils.ThrowError(c, &utils.ErrorStruct{Msg: "Bad input", Code: http.StatusBadRequest})
 			return
 		}
-		result, err, token := userService.Login(inputRequest)
+		result, token, errorToThrow := userService.Login(inputRequest)
 
-		if err != nil {
-			c.Error(err)
+		if errorToThrow != nil {
+			utils.ThrowError(c, errorToThrow)
 			return
 		}
 		c.Header("Authorization", "Bearer "+token)
@@ -59,7 +59,7 @@ func GetRoleHandler(userService service.UserService) gin.HandlerFunc {
 		if userId == 0 {
 			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: "Error: no ID found in claims"})
 		}
-		role, err := userService.GetUserRole(userId)
+		role, username, err := userService.GetUserRole(userId)
 		if err != nil {
 			ctx.JSON(err.Code, gin.H{
 				"error": err.Msg,
@@ -69,6 +69,7 @@ func GetRoleHandler(userService service.UserService) gin.HandlerFunc {
 		println("is admin ", role)
 		ctx.JSON(200, gin.H{
 			"is_admin": role,
+			"username": username,
 		})
 	}
 }

@@ -4,7 +4,6 @@ import (
 	entity "backend/Entity"
 	request "backend/Request"
 	utils "backend/Utils"
-	"errors"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -13,8 +12,8 @@ import (
 
 type UserService interface {
 	AddUser(request.UserRequest) (entity.User, *utils.ErrorStruct)
-	Login(request.UserRequest) (entity.User, error, string)
-	GetUserRole(userId int) (bool, *utils.ErrorStruct)
+	Login(request.UserRequest) (entity.User, string, *utils.ErrorStruct)
+	GetUserRole(userId int) (bool, string, *utils.ErrorStruct)
 }
 
 type userService struct {
@@ -43,38 +42,38 @@ func (u *userService) AddUser(addedUser request.UserRequest) (entity.User, *util
 }
 
 // Login implements UserService.
-func (u *userService) Login(requestInput request.UserRequest) (entity.User, error, string) {
+func (u *userService) Login(requestInput request.UserRequest) (entity.User, string, *utils.ErrorStruct) {
 	db := u.DB
 	var user entity.User
 	result := db.First(&user, "username = ?", requestInput.Username)
 
 	if result.RowsAffected != 1 {
-		return user, errors.New("No user found with this username"), ""
+		return user, "", &utils.ErrorStruct{Msg: "User not found", Code: http.StatusNotFound}
 	}
 
 	//Check if the password is correct or not
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(requestInput.Password)); err != nil {
-		return entity.User{}, errors.New("incorrect password"), ""
+		return entity.User{}, "", &utils.ErrorStruct{Msg: "Username or incorrect password", Code: http.StatusUnauthorized}
 	}
 
 	//Generate JWT Token
 	token, err := utils.CreateToken(user.Username, user.ID, user.IsAdmin)
 
 	if err != nil {
-		return user, errors.New("Error during the generation of JWT"), ""
+		return user, "", err
 	}
 
-	return user, nil, token
+	return user, token, nil
 }
 
-func (u *userService) GetUserRole(userId int) (bool, *utils.ErrorStruct) {
+func (u *userService) GetUserRole(userId int) (bool, string, *utils.ErrorStruct) {
 	db := u.DB
 	user := entity.User{ID: userId}
 	result := db.First(&user)
 	if result.Error != nil || result.RowsAffected == 0 {
-		return false, &utils.ErrorStruct{Msg: "Error : no user found", Code: http.StatusNotFound}
+		return false, "", &utils.ErrorStruct{Msg: "Error : no user found", Code: http.StatusNotFound}
 	}
-	return user.IsAdmin, nil
+	return user.IsAdmin, user.Username, nil
 }
 
 func NewUserService(db *gorm.DB) UserService {
