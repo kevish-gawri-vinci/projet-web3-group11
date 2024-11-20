@@ -1,6 +1,3 @@
-import sac1 from '../../assets/sac1.jpg';
-import sac2 from '../../assets/sac2.jpg';
-import sac3 from '../../assets/sac3.jpg';
 import Footer from '../Footer/Footer';
 import Header from '../Header/Header';
 import NavBar from '../NavBar/NavBar';

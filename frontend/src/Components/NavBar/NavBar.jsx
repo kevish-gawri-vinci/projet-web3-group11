@@ -59,6 +59,12 @@ const NavBar = () => {
             </Link>
           </div>
           <div className="right-section">
+          <Link to="/panier">
+              <button className="navbar-buttons">Panier</button>
+            </Link>
+            <Link to="/commande">
+              <button className="navbar-buttons">Commande</button>
+            </Link>
             <button className="navbar-buttons" onClick={handleLogout}>
               Logout
             </button>
