@@ -11,6 +11,8 @@ import ArticleWithId from './Components/Article/ArticleWithId'
 import Login from './Components/User/Login/LogIn'
 import { AuthProvider } from './Components/Context/UserContext'
 import Panier from './Components/Panier/Panier'
+import Commande from './Components/Commande/commande'
+import OneCommande from './Components/Commande/OneCommande'
 
 
 const RootLayout = () => (
@@ -31,6 +33,8 @@ const router = createBrowserRouter([
       { path: "/signup", element: <Signup /> },
       { path: "/addArticle", element: <AddArticlePage /> },
       { path: "/panier", element: <Panier />},
+      { path: "/commande", element: <Commande />},
+      { path: "/commande/:orderId", element: <OneCommande /> }
       /*{ path: "/add-article", element:(
         <ProtectedRoute role="admin">
           <AddArticlePage />  

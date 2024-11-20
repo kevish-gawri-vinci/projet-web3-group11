@@ -9,32 +9,6 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
-const defaultArticles = [
-  {
-      id: 1,
-      title: 'Article 1',
-      description: 'Description 1',
-      score: 1,
-      prix: 1,
-      imageUrls: [sac1, sac2, sac3]
-  },
-  {
-      id: 2,
-      title: 'Article 2',
-      description: 'Description 2',
-      score: 2,
-      prix: 2,
-      imageUrls: [sac1, sac2, sac3]
-  },
-  {
-      id: 3,
-      title: 'Article 3',
-      description: 'Description 3',
-      score: 3,
-      prix: 3,
-      imageUrls: [sac1, sac2, sac3]
-  }
-];
 
 const App = () => {
   const [articles, setArticles] = useState([]);

@@ -1,0 +1,29 @@
+.articles-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .article-card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+  }
+  
+  .article-image {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  .article-info h2 {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+  
+  .article-info p {
+    margin: 5px 0;
+  }
+  
