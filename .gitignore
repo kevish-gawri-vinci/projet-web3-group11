@@ -130,5 +130,5 @@ dist
 .pnp.*
 
 # Database config
-backend/Database/config.go
+# backend/Database/config.go
 # backend/Database/db_variables.go
