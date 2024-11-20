@@ -31,16 +31,54 @@ const Panier = () => {
     }
   };
 
-  const increaseQuantity = (articleId, currentQuantity) => {
-    const newQuantity = currentQuantity + 1;
-    console.log(newQuantity)
+  const increaseQuantity = (articleId) => {
     updateQuantity(articleId, 1, "http://localhost:8080/basket/increase-quantity");
   };
 
-  const decreaseQuantity = (articleId, currentQuantity) => {
-    const newQuantity = currentQuantity - 1;
-      updateQuantity(articleId, 1, "http://localhost:8080/basket/decrease-quantity");
+  const decreaseQuantity = (articleId) => {
+    updateQuantity(articleId, -1, "http://localhost:8080/basket/decrease-quantity");
+  };
 
+  const deleteBasket = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/basket/delete", {
+        method: "DELETE",
+        headers: {
+          Authorization: `${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la suppression du panier.");
+      }
+
+      setData([]);
+      alert("Panier supprimé avec succès.");
+    } catch (err) {
+      console.error(err.message);
+      alert("Échec de la suppression du panier.");
+    }
+  };
+
+  const finalizeOrder = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/order/finalize", {
+        method: "POST",
+        headers: {
+          Authorization: `${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la finalisation de la commande.");
+      }
+
+      setData([]);
+      alert("Commande finalisée avec succès.");
+    } catch (err) {
+      console.error(err.message);
+      alert("Échec de la finalisation de la commande.");
+    }
   };
 
   const fetchBasket = async () => {
@@ -56,8 +94,8 @@ const Panier = () => {
       }
 
       const data = await response.json();
-      setData(data.response.articles); // Met à jour le panier
-      setIsLoading(false); // Indique que le chargement est terminé
+      setData(data.response.articles);
+      setIsLoading(false);
     } catch (err) {
       setError(err);
       setIsLoading(false);
@@ -82,35 +120,51 @@ const Panier = () => {
 
   return (
     <div>
-      <h1>Panier</h1>
+      <div id="basket-upper-wrapper">
+        <h1>Panier</h1>
+        <div>
+          <button onClick={deleteBasket} className="delete-basket-btn">
+          <span>Supprimer</span>
+          </button>
+          <button onClick={finalizeOrder} className="finalize-order-btn">
+            Finaliser la commande
+          </button>
+        </div>
+      </div>
       <div>
         {data.map((article) => (
           <div className="basket-line-div" key={article.article.id}>
+            <img
+              className="basket-line-img"
+              src={article.article.imgurl}
+              alt={article.article.name}
+            />
             <h2>{article.article.name}</h2>
-            <img className="basket-line-img" src={article.article.imgurl} alt={article.article.name} />
+            
             <div className="basket-line-price-section">
-                <p className="basket-line-lineprice">Prix total : {article.lineprice} €</p>
-                <p>({article.quantity} x {article.article.price} €)</p>
-                <div className="basket-line-buttons">
-                {/* Bouton pour diminuer la quantité */}
+              <p className="basket-line-lineprice">Prix total : {article.lineprice} €</p>
+              <p>
+                ({article.quantity} x {article.article.price} €)
+              </p>
+              <div className="basket-line-buttons">
                 <button
-                    onClick={() => decreaseQuantity(article.article.id, article.quantity)}
-                    className="decrease-btn"
+                  onClick={() => decreaseQuantity(article.article.id, article.quantity)}
+                  className="decrease-btn"
                 >
-                    -
+                  -
                 </button>
-                {/* Bouton pour augmenter la quantité */}
                 <button
-                    onClick={() => increaseQuantity(article.article.id, article.quantity)}
-                    className="increase-btn"
+                  onClick={() => increaseQuantity(article.article.id, article.quantity)}
+                  className="increase-btn"
                 >
-                    +
+                  +
                 </button>
-                </div>
+              </div>
             </div>
           </div>
         ))}
       </div>
+      
     </div>
   );
 };
