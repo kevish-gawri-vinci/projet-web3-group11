@@ -47,3 +47,18 @@ func GetOrderHandler(orderService service.OrderService) gin.HandlerFunc {
 		})
 	}
 }
+
+func GetAllOrdersHandler(orderService service.OrderService) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		userId := utils.GetUserIdInClaims(ctx)
+		orderList, err := orderService.GetAllOrders(userId)
+		if err != nil {
+			utils.ThrowError(ctx, err)
+			return
+		}
+		ctx.JSON(http.StatusOK, gin.H{
+			"response": orderList,
+		})
+		return
+	}
+}

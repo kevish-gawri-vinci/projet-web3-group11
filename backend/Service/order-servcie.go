@@ -10,7 +10,7 @@ import (
 
 type OrderService interface {
 	FinaliseBasket(int) (entity.Order, *utils.ErrorStruct)
-	GetAllOrders(int) ([]entity.Order, *utils.ErrorStruct)
+	GetAllOrders(int) ([]entity.OrderListLine, *utils.ErrorStruct)
 	GetOrder(int) (entity.FullOrder, *utils.ErrorStruct)
 }
 
@@ -58,8 +58,47 @@ func (o *orderService) FinaliseBasket(userId int) (entity.Order, *utils.ErrorStr
 
 // TODO
 // GetAllOrders implements OrderService.
-func (o *orderService) GetAllOrders(userId int) ([]entity.Order, *utils.ErrorStruct) {
-	panic("unimplemented")
+func (o *orderService) GetAllOrders(userId int) ([]entity.OrderListLine, *utils.ErrorStruct) {
+	db := o.DB
+	var orderList []entity.OrderListLine
+	var allUserOrders []entity.Order
+	result := db.Where("user_id = ?", userId).Find(&allUserOrders)
+	if result.Error != nil {
+		return []entity.OrderListLine{}, &utils.ErrorStruct{Msg: "Error in the database", Code: http.StatusInternalServerError}
+	}
+	if len(allUserOrders) == 0 {
+		return []entity.OrderListLine{}, &utils.ErrorStruct{Msg: "No order found", Code: http.StatusNotFound}
+	}
+	for i := 0; i < len(allUserOrders); i++ {
+		//For each order, find its order lines to calculate order total price and total quantity
+		var orderLines []entity.OrderLine //All lines of order where order_id = allUserOrders[i].ID
+		result := db.Where("order_id = ?", allUserOrders[i].ID).Find(&orderLines)
+		if result.Error != nil {
+			return []entity.OrderListLine{}, &utils.ErrorStruct{Msg: "Error in the database", Code: http.StatusInternalServerError}
+		}
+		var totalQuantity int
+		var totalPrice float32
+		if len(orderLines) == 0 { // If the order has no line (unlikely)
+			continue
+		}
+		for j := 0; j < len(orderLines); j++ {
+			article := entity.Article{ID: orderLines[j].ArticleId}
+			totalQuantity += orderLines[j].Quantity
+			result := db.Find(&article)
+			if result.Error != nil {
+				return []entity.OrderListLine{}, &utils.ErrorStruct{Msg: "Error in the database", Code: http.StatusInternalServerError}
+			}
+			totalPrice += (float32(orderLines[j].Quantity) * float32(article.Price))
+		}
+		//Set the order list line and append to the orderlist slice
+		orderListLine := entity.OrderListLine{
+			OrderId:       allUserOrders[i].ID,
+			TotalPrice:    totalPrice,
+			TotalQuantity: totalQuantity,
+		}
+		orderList = append(orderList, orderListLine)
+	}
+	return orderList, nil
 }
 
 // GetOrder implements OrderService.

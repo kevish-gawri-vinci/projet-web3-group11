@@ -63,6 +63,7 @@ func main() {
 	/******* ORDERS **********/
 	r.POST("/order/finalise", middleware.AuthMiddleware(), handler.FinaliseBasketHandler(orderService))
 	r.GET("/order/get/:id", middleware.AuthMiddleware(), handler.GetOrderHandler(orderService))
+	r.GET("/order/getall", middleware.AuthMiddleware(), handler.GetAllOrdersHandler(orderService))
 
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
