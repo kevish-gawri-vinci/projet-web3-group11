@@ -1,18 +1,33 @@
 # Project Web 3
 
+## Quel est notre technologie ?
+### <b>Le Framework GIN</b>
+
 ## But de la l'application
 Il s'agit d'une API Rest, développée en Go dans le framework GIN, pour un site de vente en ligne.
+
+Pour configurer la base de donnée,
+1. Changez le nom du fichier <i>/Database/db_variables.template.go</i> en <i>/Database/db_variables.go</i>
+1. Remplissez les champs `username` et `password` dans le fichier db_variables (Vous pouvez changer d'autres champs également selon votre besoin (par exemple le nom de la base de donnée `DbName`)) 
 
 Pour lancer l'API, veuillez éxecuter cette commande dans le terminal
 ```
 go run main.go
 ```
+Nous avons programmer un frontend en React uniquement pour faire la démonstration
 
 <br></br>
-L'API est développée selon l'architecture 
-### <u>Diagramme de l'architecture</u> 
+L'API est développée selon l'architecture en couches
+## <u>L'architecture</u> 
 
 ![Diagram](./doc/api_diagram.png)
+
+<br></br>
+1. Le point d'entrée est le main.go où les requêtes sont ont été paramétrées (voir toutles endpoinds ci-dessous), 
+1. Le handler dédié sera appelé
+1. S'il y a aucune erreur dans les donnée du body de la requête, le service respectueux sera invoqué
+1. Le service intéragira avec la base de donnée et appliquera la logique métier pour répondre à la requête
+1. Si aucune erreur n'est produite lors de l'intéraction avec la BD, le handler retournera la réponse du service en JSON
 
 
 ## <u>Endpoints</u>

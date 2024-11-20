@@ -1,15 +1,16 @@
 # projet-web3-group11-front
 
-## How to start the project
+## Comment démarrer le projet
 > [!WARNING]
-> You need to have Go, Node and npm installed in your machine
-#### + Frontend
+> Vous devez dans un premier temps avoir npm, go et Node installé sur votre machine
+> Veuillez également suivre les instructions de configuration dans le ReadMe du backend 
+#### Frontend
 ```
 cd frontend
 npm install
 npm run dev
 ```
-#### + Backend
+#### Backend
 ```
 cd backend
 go run main.go
