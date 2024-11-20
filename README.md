@@ -3,7 +3,7 @@
 ## Comment démarrer le projet
 > [!WARNING]
 > Vous devez dans un premier temps avoir npm, go et Node installé sur votre machine
-> Veuillez également suivre les instructions de configuration dans le ReadMe du backend 
+> <br></br>Veuillez également suivre les instructions de configuration dans le ReadMe du backend 
 #### Frontend
 ```
 cd frontend
@@ -13,5 +13,6 @@ npm run dev
 #### Backend
 ```
 cd backend
+go mod tidy
 go run main.go
 ```
