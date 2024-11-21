@@ -59,17 +59,16 @@ func GetRoleHandler(userService service.UserService) gin.HandlerFunc {
 		if userId == 0 {
 			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: "Error: no ID found in claims"})
 		}
-		role, username, err := userService.GetUserRole(userId)
+		response, err := userService.GetUserRole(userId)
 		if err != nil {
 			ctx.JSON(err.Code, gin.H{
 				"error": err.Msg,
 			})
 			return
 		}
-		println("is admin ", role)
+		println("is admin ", response.IsAdmin)
 		ctx.JSON(200, gin.H{
-			"is_admin": role,
-			"username": username,
+			"response": response,
 		})
 	}
 }

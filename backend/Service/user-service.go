@@ -13,7 +13,7 @@ import (
 type UserService interface {
 	AddUser(request.UserRequest) (entity.User, *utils.ErrorStruct)
 	Login(request.UserRequest) (entity.User, string, *utils.ErrorStruct)
-	GetUserRole(userId int) (bool, string, *utils.ErrorStruct)
+	GetUserRole(userId int) (request.UserRoleRequest, *utils.ErrorStruct)
 }
 
 type userService struct {
@@ -66,14 +66,17 @@ func (u *userService) Login(requestInput request.UserRequest) (entity.User, stri
 	return user, token, nil
 }
 
-func (u *userService) GetUserRole(userId int) (bool, string, *utils.ErrorStruct) {
+func (u *userService) GetUserRole(userId int) (request.UserRoleRequest, *utils.ErrorStruct) {
 	db := u.DB
 	user := entity.User{ID: userId}
 	result := db.First(&user)
+	var response request.UserRoleRequest
 	if result.Error != nil || result.RowsAffected == 0 {
-		return false, "", &utils.ErrorStruct{Msg: "Error : no user found", Code: http.StatusNotFound}
+		return request.UserRoleRequest{}, &utils.ErrorStruct{Msg: "Error : no user found", Code: http.StatusNotFound}
 	}
-	return user.IsAdmin, user.Username, nil
+	response.IsAdmin = user.IsAdmin
+	response.Username = user.Username
+	return response, nil
 }
 
 func NewUserService(db *gorm.DB) UserService {

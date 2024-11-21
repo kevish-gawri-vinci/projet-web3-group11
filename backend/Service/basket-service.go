@@ -14,7 +14,7 @@ import (
 type BasketService interface {
 	AddOneArticle(request.BasketArticleRequest) (entity.BasketItem, *utils.ErrorStruct)
 	DeleteBasket(int) *utils.ErrorStruct
-	GetBasket(int) (entity.FullBasket, *utils.ErrorStruct)
+	GetBasket(int) (request.FullBasket, *utils.ErrorStruct)
 	IncreaseQuantity(request.BasketArticleRequest) *utils.ErrorStruct
 	DecreaseQuantity(request.BasketArticleRequest) *utils.ErrorStruct
 }
@@ -66,19 +66,19 @@ func (b *basketService) DeleteBasket(id int) *utils.ErrorStruct {
 	return nil
 }
 
-func (b *basketService) GetBasket(id int) (entity.FullBasket, *utils.ErrorStruct) {
+func (b *basketService) GetBasket(id int) (request.FullBasket, *utils.ErrorStruct) {
 	db := b.DB
 	basketItems := []entity.BasketItem{}
 	result := db.Where("user_id = ?", id).Find(&basketItems)
 	println("In the service of GetBasket")
 	if result.Error != nil {
-		return entity.FullBasket{}, &utils.ErrorStruct{Msg: result.Error.Error(), Code: http.StatusInternalServerError}
+		return request.FullBasket{}, &utils.ErrorStruct{Msg: result.Error.Error(), Code: http.StatusInternalServerError}
 	}
 
 	if result.RowsAffected == 0 {
-		return entity.FullBasket{}, nil
+		return request.FullBasket{}, nil
 	}
-	var articleArray []entity.BasketDetail
+	var articleArray []request.BasketDetail
 	var totalPrice float32
 	println("Size of articles ", len(basketItems))
 	for i := 0; i < len(basketItems); i++ {
@@ -87,11 +87,11 @@ func (b *basketService) GetBasket(id int) (entity.FullBasket, *utils.ErrorStruct
 		db.Find(&article)
 		lineQuantity := basketItems[i].Quantity
 		linePrice := float32(article.Price * float32(lineQuantity))
-		basketDetail := entity.BasketDetail{ArticleDetail: article, LinePrice: linePrice, Quantity: lineQuantity}
+		basketDetail := request.BasketDetail{ArticleDetail: article, LinePrice: linePrice, Quantity: lineQuantity}
 		totalPrice += linePrice
 		articleArray = append(articleArray, basketDetail)
 	}
-	fullBasket := entity.FullBasket{
+	fullBasket := request.FullBasket{
 		UserId:     id,
 		Articles:   articleArray,
 		TotalPrice: totalPrice,

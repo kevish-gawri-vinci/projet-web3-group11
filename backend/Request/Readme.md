@@ -8,3 +8,6 @@
 
 ### This will convert the data we receive to usable objects, making it easier to code.
 #### Structs of this folder will mainly be used in Handlers, when managing the incoming requests. Similar to DTO (Data to Object)
+
+## So have a request struct for each request or a response with a body containing multiple attributes
+### Eg. /auth/user-role does not require one as response is just 
