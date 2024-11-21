@@ -1,7 +1,7 @@
 package handler
 
 import (
-	entity "backend/Entity"
+	request "backend/Request"
 	service "backend/Service"
 	utils "backend/Utils"
 	"fmt"
@@ -39,7 +39,7 @@ func GetOneByIdHandler(articleService service.ArticleService) gin.HandlerFunc {
 		}
 
 		article, error := articleService.GetOneById(id)
-		if err != nil {
+		if error != nil {
 			utils.ThrowError(ctx, error)
 			return
 		}
@@ -53,7 +53,7 @@ func AddArticleHandler(articleService service.ArticleService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		//Check if user is admin
 		//Request article is the same as entity article to go in gorm so I will take the same
-		var req entity.Article
+		var req request.ArticleRequest
 		errorInBind := ctx.ShouldBind(&req)
 		println(req.Name, req.Description, req.ImgUrl, float32(req.Price))
 		if errorInBind != nil {
