@@ -41,7 +41,7 @@ const Panier = () => {
 
   const deleteBasket = async () => {
     try {
-      const response = await fetch("http://localhost:8080/basket/delete", {
+      const response = await fetch("http://localhost:8080/basket/delete-all", {
         method: "DELETE",
         headers: {
           Authorization: `${localStorage.getItem("token")}`,

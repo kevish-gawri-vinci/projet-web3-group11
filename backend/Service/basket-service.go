@@ -12,7 +12,7 @@ import (
 )
 
 type BasketService interface {
-	AddOneArticle(request.BasketArticleRequest) (entity.BasketItem, *utils.ErrorStruct)
+	AddOneArticle(request.BasketArticleRequest) *utils.ErrorStruct
 	DeleteBasket(int) *utils.ErrorStruct
 	GetBasket(int) (request.FullBasket, *utils.ErrorStruct)
 	IncreaseQuantity(request.BasketArticleRequest) *utils.ErrorStruct
@@ -24,7 +24,7 @@ type basketService struct {
 }
 
 // AddOneArticle implements BasketService.
-func (b *basketService) AddOneArticle(req request.BasketArticleRequest) (entity.BasketItem, *utils.ErrorStruct) {
+func (b *basketService) AddOneArticle(req request.BasketArticleRequest) *utils.ErrorStruct {
 	//SQL query
 	db := b.DB
 	//If user hasn't added the product in the basket yet
@@ -41,13 +41,13 @@ func (b *basketService) AddOneArticle(req request.BasketArticleRequest) (entity.
 				db.First(&basketItem)
 				newQuantity := req.Quantity + basketItem.Quantity
 				db.Model(&basketItem).Where("user_id = ? AND article_id = ?", req.UserId, req.ArticleId).Update("quantity", newQuantity)
-				return basketItem, nil
+				return nil
 			} else {
-				return entity.BasketItem{}, &utils.ErrorStruct{Msg: "Could not add article to the basket", Code: http.StatusInternalServerError}
+				return &utils.ErrorStruct{Msg: "Could not add article to the basket", Code: http.StatusInternalServerError}
 			}
 		}
 	}
-	return basketItem, nil
+	return nil
 }
 
 func (b *basketService) DeleteBasket(id int) *utils.ErrorStruct {

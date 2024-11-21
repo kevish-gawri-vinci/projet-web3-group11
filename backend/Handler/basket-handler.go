@@ -13,17 +13,13 @@ func AddArticleToBasketHandler(basketService service.BasketService) gin.HandlerF
 	return func(ctx *gin.Context) {
 		var req request.BasketArticleRequest
 		ctx.BindJSON(&req)
-		userId := utils.GetUserIdInClaims(ctx)
-		req.UserId = userId
 		req.UserId = utils.GetUserIdInClaims(ctx)
-		basketItem, err := basketService.AddOneArticle(req)
+		err := basketService.AddOneArticle(req)
 		if err != nil {
 			utils.ThrowError(ctx, err)
 			return
 		}
-		ctx.JSON(http.StatusOK, gin.H{
-			"basket_item": basketItem,
-		})
+		ctx.JSON(http.StatusOK, gin.H{})
 	}
 }
 
@@ -35,7 +31,7 @@ func DeleteBasketHandler(basketService service.BasketService) gin.HandlerFunc {
 			utils.ThrowError(ctx, error)
 			return
 		}
-		ctx.JSON(http.StatusOK, gin.H{"response": "ok"})
+		ctx.JSON(http.StatusOK, gin.H{})
 	}
 }
 
@@ -65,9 +61,7 @@ func IncreaseQuantityHandler(basketService service.BasketService) gin.HandlerFun
 			utils.ThrowError(ctx, error)
 			return
 		}
-		ctx.JSON(http.StatusOK, gin.H{
-			"response": "ok",
-		})
+		ctx.JSON(http.StatusOK, gin.H{})
 	}
 }
 
@@ -88,8 +82,6 @@ func DecreaseQuantityHandler(basketService service.BasketService) gin.HandlerFun
 			utils.ThrowError(ctx, error)
 			return
 		}
-		ctx.JSON(http.StatusOK, gin.H{
-			"response": "ok",
-		})
+		ctx.JSON(http.StatusOK, gin.H{})
 	}
 }
