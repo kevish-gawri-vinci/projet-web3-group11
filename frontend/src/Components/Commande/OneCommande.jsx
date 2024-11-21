@@ -63,7 +63,7 @@ const Commande = () => {
               <p>{article.articledetail.description}</p>
             </div>  
               <p className="orderid-quantity">Quantité : {article.articleline.quantity}</p>
-              <p className="orderid-priceOne">Prix unitaire : {article.articledetail.price}</p>
+              <p className="orderid-priceOne">Prix unitaire : {article.articledetail.price.toFixed(2)}</p>
               <p className="orderid-totalPrice">Prix total : {article.articleline.price.toFixed(2)} $</p>
             
           </div>

@@ -43,27 +43,31 @@ func main() {
 	})
 
 	/*************** USER **************/
-	r.POST("/auth/signup", handler.AddUserHandler(userService))
-	r.POST("/auth/login", handler.LoginHandler(userService))
-	r.GET("/auth/user-role", middleware.AuthMiddleware(), handler.GetRoleHandler(userService)) //Auth
+	userGroup := r.Group("/auth")
+	userGroup.POST("/signup", handler.AddUserHandler(userService))
+	userGroup.POST("/login", handler.LoginHandler(userService))
+	userGroup.GET("/user-role", middleware.AuthMiddleware(), handler.GetRoleHandler(userService)) //Auth
 
 	/****** ARTICLES *********/
-	r.GET("/article/getall", handler.GetAllHandler(articleService))
-	r.GET("/article/get/:id", handler.GetOneByIdHandler(articleService))
-	r.POST("/article/add", middleware.AuthMiddleware(), middleware.AdminMiddleware(), handler.AddArticleHandler(articleService)) //Auth + admin
+	articleGroup := r.Group("/article")
+	articleGroup.GET("/getall", handler.GetAllHandler(articleService))
+	articleGroup.GET("/get/:id", handler.GetOneByIdHandler(articleService))
+	articleGroup.POST("/add", middleware.AuthMiddleware(), middleware.AdminMiddleware(), handler.AddArticleHandler(articleService)) //Auth + admin
 
 	//Request that need authentification (eg. add article)
 	/******* BASKETS **********/
-	r.POST("/basket/add", middleware.AuthMiddleware(), handler.AddArticleToBasketHandler(basketService))
-	r.DELETE("/basket/delete-all", middleware.AuthMiddleware(), handler.DeleteBasketHandler(basketService))
-	r.GET("/basket/get", middleware.AuthMiddleware(), handler.GetBasketHandler(basketService))
-	r.PUT("/basket/increase-quantity", middleware.AuthMiddleware(), handler.IncreaseQuantityHandler(basketService))
-	r.PUT("/basket/decrease-quantity", middleware.AuthMiddleware(), handler.DecreaseQuantityHandler(basketService))
+	basketGroup := r.Group("/basket")
+	basketGroup.POST("/add", middleware.AuthMiddleware(), handler.AddArticleToBasketHandler(basketService))
+	basketGroup.DELETE("/delete-all", middleware.AuthMiddleware(), handler.DeleteBasketHandler(basketService))
+	basketGroup.GET("/get", middleware.AuthMiddleware(), handler.GetBasketHandler(basketService))
+	basketGroup.PUT("/increase-quantity", middleware.AuthMiddleware(), handler.IncreaseQuantityHandler(basketService))
+	basketGroup.PUT("/decrease-quantity", middleware.AuthMiddleware(), handler.DecreaseQuantityHandler(basketService))
 
 	/******* ORDERS **********/
-	r.POST("/order/finalize", middleware.AuthMiddleware(), handler.FinaliseBasketHandler(orderService))
-	r.GET("/order/get/:id", middleware.AuthMiddleware(), handler.GetOrderHandler(orderService))
-	r.GET("/order/getall", middleware.AuthMiddleware(), handler.GetAllOrdersHandler(orderService))
+	orderGroup := r.Group("/order")
+	orderGroup.POST("/finalize", middleware.AuthMiddleware(), handler.FinaliseBasketHandler(orderService))
+	orderGroup.GET("/get/:id", middleware.AuthMiddleware(), handler.GetOrderHandler(orderService))
+	orderGroup.GET("/getall", middleware.AuthMiddleware(), handler.GetAllOrdersHandler(orderService))
 
 	r.Run() // listen and serve on 0.0.0.0:8080
 }

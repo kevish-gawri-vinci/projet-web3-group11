@@ -81,7 +81,7 @@ const ArticleWithId = () => {
         <h5 className="card-title">{article.name}</h5>
         <p className="card-text">{article.description}</p>
         <div>
-          <h6>{article.price} €</h6>
+          <h6>{article.price.toFixed(2)} €</h6>
         </div>
       </div>
       <div id="quantity-div">

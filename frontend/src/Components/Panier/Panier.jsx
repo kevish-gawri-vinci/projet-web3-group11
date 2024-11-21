@@ -142,9 +142,9 @@ const Panier = () => {
             <h2>{article.article.name}</h2>
             
             <div className="basket-line-price-section">
-              <p className="basket-line-lineprice">Prix total : {article.lineprice} €</p>
+              <p className="basket-line-lineprice">Prix total : {article.lineprice.toFixed(2)} €</p>
               <p>
-                ({article.quantity} x {article.article.price} €)
+                ({article.quantity} x {article.article.price.toFixed(2)} €)
               </p>
               <div className="basket-line-buttons">
                 <button
