@@ -14,15 +14,13 @@ func FinaliseBasketHandler(orderService service.OrderService) gin.HandlerFunc {
 		//retrieve ID from ctx variables
 		userId := utils.GetUserIdInClaims(ctx)
 
-		order, err := orderService.FinaliseBasket(userId)
+		err := orderService.FinaliseBasket(userId)
 		if err != nil {
 			utils.ThrowError(ctx, err)
 			return
 		}
 
-		ctx.JSON(http.StatusOK, gin.H{
-			"response": order,
-		})
+		ctx.JSON(http.StatusOK, gin.H{})
 	}
 }
 

@@ -10,7 +10,7 @@ import (
 )
 
 type OrderService interface {
-	FinaliseBasket(int) (entity.Order, *utils.ErrorStruct)
+	FinaliseBasket(int) *utils.ErrorStruct
 	GetAllOrders(int) ([]request.OrderListLine, *utils.ErrorStruct)
 	GetOrder(int, int) (request.FullOrder, *utils.ErrorStruct)
 }
@@ -21,20 +21,20 @@ type orderService struct {
 }
 
 // FinaliseBasket implements OrderService. //TODO
-func (o *orderService) FinaliseBasket(userId int) (entity.Order, *utils.ErrorStruct) {
+func (o *orderService) FinaliseBasket(userId int) *utils.ErrorStruct {
 	db := o.DB
 
 	//Get the basket of the user
 	basket, errorToThrow := o.BasketService.GetBasket(userId)
 	if errorToThrow != nil {
-		return entity.Order{}, errorToThrow
+		return errorToThrow
 	}
 	// Add the order in the DB
 	order := entity.Order{UserId: userId}
 	result := db.Create(&order)
 	if result.Error != nil {
 		errorToThrow := &utils.ErrorStruct{Msg: "Error while creating the order", Code: http.StatusInternalServerError}
-		return entity.Order{}, errorToThrow
+		return errorToThrow
 	}
 
 	//For each line of the basket, create an orderLine
@@ -44,20 +44,19 @@ func (o *orderService) FinaliseBasket(userId int) (entity.Order, *utils.ErrorStr
 		result := db.Create(&orderLine)
 		if result.Error != nil {
 			errorToThrow := &utils.ErrorStruct{Msg: "Error while adding the article in order", Code: http.StatusInternalServerError}
-			return entity.Order{}, errorToThrow
+			return errorToThrow
 		}
 	}
 
 	//Delete Basket
 	errorToThrow = o.BasketService.DeleteBasket(userId)
 	if errorToThrow != nil {
-		return entity.Order{}, errorToThrow
+		return errorToThrow
 	}
 
-	return order, nil
+	return nil
 }
 
-// TODO
 // GetAllOrders implements OrderService.
 func (o *orderService) GetAllOrders(userId int) ([]request.OrderListLine, *utils.ErrorStruct) {
 	db := o.DB
