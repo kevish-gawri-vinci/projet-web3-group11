@@ -59,5 +59,7 @@ Voici une liste des endpoints que notre API propose
 |`/order/get/:id`|`GET`|1. orderId (number) |Gets the order |
 |`/order/finalize`|`POST`|/|Finalises the basket of a user|
 </br>
+
 ## <u>Diagramme de la base de donnée</u>
-![DB Diagram](./doc/db_diagram.png)
+
+![Diagram](./doc/db_diagram.png)
