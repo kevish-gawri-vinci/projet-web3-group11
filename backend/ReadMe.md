@@ -8,7 +8,15 @@ Il s'agit d'une API Rest, développée en Go dans le framework GIN, pour un site
 
 Pour configurer la base de donnée,
 1. Changez le nom du fichier <i>/Database/db_variables.template.go</i> en <i>/Database/db_variables.go</i>
-1. Remplissez les champs `username` et `password` dans le fichier db_variables (Vous pouvez changer d'autres champs également selon votre besoin (par exemple le nom de la base de donnée `DbName`)) 
+1. Remplissez les champs `username` et `password` dans le fichier db_variables (Vous pouvez changer d'autres champs également selon votre besoin (par exemple le nom de la base de donnée `DbName`))
+1. Dans une query console de datagrip, éxecutez cette query 
+```
+CREATE DATABASE web3_project_db
+```
+4. Connectez vous à cette base de donnée
+5. Collez le SQL que vous trouverez dans  le fichier backend/Database/script.sql
+6. Executez le <br></br>
+![Diagram](./doc/tuto_db.gif)
 
 Pour lancer l'API, veuillez éxecuter cette commande dans le terminal
 ```
