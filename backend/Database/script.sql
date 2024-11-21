@@ -35,7 +35,7 @@ CREATE TABLE order_lines (
 );
 
 -- DROIT A WEB3CLIENT
-GRANT INSERT, UPDATE, DELETE, SELECT ON users, orders, articles, basket_items, order_lines TO web3_client;
+-- GRANT INSERT, UPDATE, DELETE, SELECT ON users, orders, articles, basket_items, order_lines TO web3_client;
 
 --INSERT ADMIN
 INSERT INTO users(username, password, is_admin)
