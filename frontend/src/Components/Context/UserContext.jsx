@@ -31,6 +31,7 @@ export const AuthProvider = ({ children }) => {
       })
       .catch(() => {
         setAuth({ isAuthenticated: false, role: "guest" });
+        localStorage.removeItem("token")
       });
   }, []);
 

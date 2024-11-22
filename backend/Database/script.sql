@@ -23,7 +23,6 @@ CREATE TABLE basket_items (
 CREATE TABLE orders(
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id),
-    delivery_address VARCHAR(200) NOT NULL,
     total_price FLOAT NOT NULL
 );
 
