@@ -4,7 +4,6 @@ import (
 	request "backend/Request"
 	service "backend/Service"
 	utils "backend/Utils"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -17,14 +16,13 @@ func GetAllHandler(articleService service.ArticleService) gin.HandlerFunc {
 
 		if err != nil {
 			// Send error to the middleware
-			println("test erreur ")
 			utils.ThrowError(ctx, err)
+			return
 		}
-		println("blabla")
-		fmt.Println(response[0])
 		ctx.JSON(http.StatusOK, gin.H{
 			"response": response,
 		})
+		return
 	}
 }
 
@@ -32,7 +30,6 @@ func GetOneByIdHandler(articleService service.ArticleService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		rawId := ctx.Params.ByName("id")
 		id, err := strconv.Atoi(rawId)
-		print("The converted int ", id)
 		if err != nil || id == 0 {
 			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: err.Error(), Code: http.StatusBadRequest})
 			return
@@ -46,6 +43,7 @@ func GetOneByIdHandler(articleService service.ArticleService) gin.HandlerFunc {
 		ctx.JSON(http.StatusOK, gin.H{
 			"response": article,
 		})
+		return
 	}
 }
 
@@ -55,7 +53,6 @@ func AddArticleHandler(articleService service.ArticleService) gin.HandlerFunc {
 		//Request article is the same as entity article to go in gorm so I will take the same
 		var req request.ArticleRequest
 		errorInBind := ctx.ShouldBind(&req)
-		println(req.Name, req.Description, req.ImgUrl, float32(req.Price))
 		if errorInBind != nil {
 			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: "Bad input", Code: http.StatusBadRequest})
 			return

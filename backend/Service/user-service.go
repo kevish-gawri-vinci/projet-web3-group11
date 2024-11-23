@@ -4,15 +4,17 @@ import (
 	entity "backend/Entity"
 	request "backend/Request"
 	utils "backend/Utils"
+	"errors"
 	"net/http"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
 type UserService interface {
-	AddUser(request.UserRequest) (entity.User, *utils.ErrorStruct)
-	Login(request.UserRequest) (entity.User, string, *utils.ErrorStruct)
+	AddUser(request.UserRequest) *utils.ErrorStruct
+	Login(request.UserRequest) (string, *utils.ErrorStruct)
 	GetUserRole(userId int) (request.UserRoleRequest, *utils.ErrorStruct)
 }
 
@@ -21,49 +23,53 @@ type userService struct {
 }
 
 // AddUser implements UserService.
-func (u *userService) AddUser(addedUser request.UserRequest) (entity.User, *utils.ErrorStruct) {
-	print("Called adduser")
+func (u *userService) AddUser(addedUser request.UserRequest) *utils.ErrorStruct {
 	db := u.DB
-	var user entity.User
 
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(addedUser.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return entity.User{}, &utils.ErrorStruct{Msg: "Bcrypt error : " + err.Error(), Code: http.StatusInternalServerError}
+		return &utils.ErrorStruct{Msg: "Bcrypt error : " + err.Error(), Code: http.StatusInternalServerError}
 	}
 
 	if err := db.Create(&entity.User{
 		Username: addedUser.Username,
 		Password: string(hashPassword),
 	}).Error; err != nil {
-		return entity.User{}, &utils.ErrorStruct{Msg: "DB error : " + err.Error(), Code: http.StatusInternalServerError}
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == "23505" {
+				return &utils.ErrorStruct{Msg: "User already exists", Code: http.StatusNotAcceptable}
+			}
+		}
+		return &utils.ErrorStruct{Msg: "DB error : " + err.Error(), Code: http.StatusInternalServerError}
 	}
 
-	return user, nil
+	return nil
 }
 
 // Login implements UserService.
-func (u *userService) Login(requestInput request.UserRequest) (entity.User, string, *utils.ErrorStruct) {
+func (u *userService) Login(requestInput request.UserRequest) (string, *utils.ErrorStruct) {
 	db := u.DB
 	var user entity.User
 	result := db.First(&user, "username = ?", requestInput.Username)
 
 	if result.RowsAffected != 1 {
-		return user, "", &utils.ErrorStruct{Msg: "User not found", Code: http.StatusNotFound}
+		return "", &utils.ErrorStruct{Msg: "User not found", Code: http.StatusNotFound}
 	}
 
 	//Check if the password is correct or not
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(requestInput.Password)); err != nil {
-		return entity.User{}, "", &utils.ErrorStruct{Msg: "Username or incorrect password", Code: http.StatusUnauthorized}
+		return "", &utils.ErrorStruct{Msg: "Username or incorrect password", Code: http.StatusUnauthorized}
 	}
 
 	//Generate JWT Token
 	token, err := utils.CreateToken(user.Username, user.ID, user.IsAdmin)
 
 	if err != nil {
-		return user, "", err
+		return "", err
 	}
 
-	return user, token, nil
+	return token, nil
 }
 
 func (u *userService) GetUserRole(userId int) (request.UserRoleRequest, *utils.ErrorStruct) {

@@ -22,11 +22,10 @@ export const AuthProvider = ({ children }) => {
         },
       })
       .then((response) => {
-        console.log("dzfjdef " + response.data.is_admin, response.data.username)
         setAuth({
           isAuthenticated: true,
-          role: response.data.is_admin ? "admin" : "user",
-          username: response.data.username?? undefined
+          role: response.data.response.isadmin ? "admin" : "user",
+          username: response.data.response.username?? undefined
         });
       })
       .catch(() => {

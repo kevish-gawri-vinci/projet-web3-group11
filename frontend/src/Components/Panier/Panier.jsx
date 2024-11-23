@@ -82,6 +82,7 @@ const Panier = () => {
   };
 
   const fetchBasket = async () => {
+    console.log("fetching basket ")
     try {
       const response = await fetch("http://localhost:8080/basket/get", {
         headers: {

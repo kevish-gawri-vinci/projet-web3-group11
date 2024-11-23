@@ -28,6 +28,10 @@
     align-self: center;
   }
 
+  .errorMessage{
+    color:red;
+  }
+
   #quantity-div{
     display: flex;
     align-items: center;
@@ -87,10 +91,13 @@
   }
   
   /* Message après ajout */
-  .card p {
+  .goodMessage {
+    color: #28a745;
+  }
+
+  #infoMessage {
     text-align: center;
     font-size: 14px;
-    color: #28a745;
     font-weight: bold;
   }
   

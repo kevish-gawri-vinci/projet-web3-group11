@@ -12,21 +12,23 @@ import (
 func AddUserHandler(userService service.UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest request.UserRequest
-		if err := c.ShouldBind(&userRequest); err != nil {
-			c.Error(err)
+		bindError := c.ShouldBind(&userRequest)
+		if bindError != nil {
+			utils.ThrowError(c, &utils.ErrorStruct{Msg: "Bad input", Code: http.StatusBadRequest})
 			return
 		}
-		user, err := userService.AddUser(userRequest)
+		isPasswordOK, err := utils.CheckPassword(userRequest.Password)
+		if !isPasswordOK {
+			utils.ThrowError(c, err)
+			return
+		}
+		err = userService.AddUser(userRequest)
 		if err != nil {
-			c.Error(err)
+			utils.ThrowError(c, err)
 			return
 		}
 
-		c.JSON(http.StatusCreated, gin.H{
-			"id":       user.ID,
-			"username": user.Username,
-			"password": user.Password,
-		})
+		c.JSON(http.StatusCreated, gin.H{})
 	}
 }
 
@@ -38,16 +40,14 @@ func LoginHandler(userService service.UserService) gin.HandlerFunc {
 			utils.ThrowError(c, &utils.ErrorStruct{Msg: "Bad input", Code: http.StatusBadRequest})
 			return
 		}
-		result, token, errorToThrow := userService.Login(inputRequest)
+		token, errorToThrow := userService.Login(inputRequest)
 
 		if errorToThrow != nil {
 			utils.ThrowError(c, errorToThrow)
 			return
 		}
 		c.Header("Authorization", "Bearer "+token)
-		c.JSON(http.StatusAccepted, gin.H{
-			"message": result,
-		})
+		c.JSON(http.StatusAccepted, gin.H{})
 	}
 }
 
@@ -55,18 +55,14 @@ func GetRoleHandler(userService service.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		//User is already authentified => authmiddleware
 		userId := utils.GetUserIdInClaims(ctx)
-		println("User id is ", userId)
 		if userId == 0 {
 			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: "Error: no ID found in claims"})
 		}
 		response, err := userService.GetUserRole(userId)
 		if err != nil {
-			ctx.JSON(err.Code, gin.H{
-				"error": err.Msg,
-			})
+			utils.ThrowError(ctx, err)
 			return
 		}
-		println("is admin ", response.IsAdmin)
 		ctx.JSON(200, gin.H{
 			"response": response,
 		})

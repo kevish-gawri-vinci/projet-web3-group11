@@ -29,7 +29,7 @@ func CreateToken(username string, userId int, isAdmin bool) (string, *ErrorStruc
 }
 
 func VerifyToken(tokenString string) (*jwt.Token, *ErrorStruct) {
-	println("Verifying token ", tokenString)
+	println("Verifying token...")
 	//Remove Bearer
 	trimmedToken := strings.TrimPrefix(tokenString, "Bearer ")
 	token, err := jwt.Parse(trimmedToken, func(token *jwt.Token) (interface{}, error) {
@@ -37,15 +37,15 @@ func VerifyToken(tokenString string) (*jwt.Token, *ErrorStruct) {
 	})
 
 	if err != nil {
-		println("Error :", err.Error())
+		print("Error :", err.Error())
 		return nil, &ErrorStruct{Msg: err.Error(), Code: http.StatusUnauthorized}
 	}
 
 	if !token.Valid {
-		println("Token invalid")
+		print("Token invalid")
 		return nil, &ErrorStruct{Msg: "Token is invalid", Code: http.StatusUnauthorized}
 	}
-	println("Token validated continuing...")
+	print("Token validated continuing...")
 	return token, nil
 }
 
@@ -65,8 +65,8 @@ func GetUserIdInClaims(ctx *gin.Context) int {
 			return 0
 		}
 		userIDInt := int(userID)
-		println(userIDInt)
 		finalId = userIDInt
+		println("user " + string(userIDInt) + " found")
 	}
 	return finalId
 }

@@ -13,6 +13,10 @@ func AddArticleToBasketHandler(basketService service.BasketService) gin.HandlerF
 	return func(ctx *gin.Context) {
 		var req request.BasketArticleRequest
 		ctx.BindJSON(&req)
+		if req.Quantity == 0 {
+			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: "Quantity cannot be 0", Code: http.StatusBadRequest})
+			return
+		}
 		req.UserId = utils.GetUserIdInClaims(ctx)
 		err := basketService.AddOneArticle(req)
 		if err != nil {

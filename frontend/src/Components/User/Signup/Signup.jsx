@@ -5,6 +5,8 @@ import "./Signup.css";
 const Signup = () => {
     const [formData, setFormData] = useState({ username: "", password: "" });
     const navigate = useNavigate(); // Hook pour rediriger
+  const [error, setError] = useState("");
+
 
     // Gestion des changements dans les champs
     const handleChange = (e) => {
@@ -29,37 +31,44 @@ const Signup = () => {
             } else {
                 // Gérer les erreurs ici
                 console.log("Erreur lors de la création de l'utilisateur ");
-                alert("An error occured please retry")
+                const result = await response.json()
+                console.log(result.error)
+                throw Error(result.error)
             }
-        } catch (error) {
-            alert("An error occured please retry "+ error)
+        } catch (err) {
+            console.log("zbad ", err)
+            setError(err ? `${err}` : "An error occurred.");
             console.log("Une erreur est survenue :", error);
         }
     };
 
     return (
-        <div id="signup-form-wrapper">
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="username">Name</label>
-                <input
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    required
-                />
+        <div>
+            {error && <p className="error-message">{error}</p>}
+            <div id="signup-form-wrapper">
+            
+                <form onSubmit={handleSubmit}>
+                    <label htmlFor="username">Name</label>
+                    <input
+                        type="text"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleChange}
+                        required
+                    />
 
-                <label htmlFor="password">Password</label>
-                <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                />
+                    <label htmlFor="password">Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                    />
 
-                <input type="submit" value="Envoyer" id="signup-form-submit-btn" />
-            </form>
+                    <input type="submit" value="Envoyer" id="signup-form-submit-btn" />
+                </form>
+            </div>
         </div>
     );
 };

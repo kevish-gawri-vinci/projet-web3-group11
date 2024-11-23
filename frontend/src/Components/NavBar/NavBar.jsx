@@ -5,7 +5,7 @@ import React, { useContext } from "react";
 
 const NavBar = () => {
   const { auth, handleLogout } = useContext(UserContext);
-
+  console.log("role role ", auth.role)
   return (
     <>
       {auth.role === "guest" && (

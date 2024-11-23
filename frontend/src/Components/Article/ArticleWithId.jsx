@@ -38,6 +38,7 @@ const ArticleWithId = () => {
   }, [articleId]);
 
   const addToBasket = async () => {
+    // document.getElementById("infoMessage").classList.remove("errorMessage")
     try {
       const response = await fetch("http://localhost:8080/basket/add", {
         method: "POST",
@@ -52,12 +53,21 @@ const ArticleWithId = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Erreur lors de l'ajout au panier.");
-      }
+        const err = await response.json()
+        console.log(err.error)
+        throw new Error(err.error)
+      } 
 
       setMessage("Article ajouté au panier avec succès !");
+      const classes = document.getElementById("infoMessage").classList
+      classes.contains("errorMessage") ? classes.remove("errorMessage") : undefined
+      classes.add("goodMessage")
     } catch (err) {
-      setMessage(`Erreur : ${err.message}`);
+      console.log(err)
+      setMessage(`${err}`);
+      const classes = document.getElementById("infoMessage").classList
+      classes.contains("goodMessage") ? classes.remove("goodMessage") : undefined
+      classes.add("errorMessage")
     }
   };
 
@@ -103,7 +113,7 @@ const ArticleWithId = () => {
         </div><div>
             <button onClick={addToBasket}>Ajouter au Panier</button>
           </div>
-        {message && <p>{message}</p>}</>
+        {message && <p id="infoMessage" className="">{message}</p>}</>
       )}
     </div>
   );
