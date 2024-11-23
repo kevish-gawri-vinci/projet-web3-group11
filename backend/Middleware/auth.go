@@ -51,6 +51,7 @@ func AdminMiddleware() gin.HandlerFunc {
 		} else {
 			utils.ThrowError(ctx, &utils.ErrorStruct{Msg: "User is not admin", Code: http.StatusUnauthorized})
 			ctx.Abort()
+			return
 		}
 	}
 }
