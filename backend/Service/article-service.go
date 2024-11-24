@@ -76,7 +76,7 @@ func (a *articleService) AddArticle(req request.ArticleRequest) *utils.ErrorStru
 	result := db.Create(&article)
 
 	if result.RowsAffected != 1 {
-		return &utils.ErrorStruct{Msg: "Could not add the article", Code: http.StatusNotFound}
+		return &utils.ErrorStruct{Msg: "Could not add the article", Code: http.StatusInternalServerError}
 	}
 
 	return nil

@@ -49,8 +49,6 @@ func GetOneByIdHandler(articleService service.ArticleService) gin.HandlerFunc {
 
 func AddArticleHandler(articleService service.ArticleService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		//Check if user is admin
-		//Request article is the same as entity article to go in gorm so I will take the same
 		var req request.ArticleRequest
 		errorInBind := ctx.ShouldBind(&req)
 		if errorInBind != nil {
