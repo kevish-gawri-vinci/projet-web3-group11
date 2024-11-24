@@ -1,4 +1,4 @@
-# projet-web3-group11-front
+# projet-web3-group11 par Kevish GAWRI, Sébastien Dewilde et Sungrab Tenzin 
 
 ## Comment démarrer le projet
 > [!WARNING]
