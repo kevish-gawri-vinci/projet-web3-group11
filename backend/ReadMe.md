@@ -63,3 +63,6 @@ Voici une liste des endpoints que notre API propose
 ## <u>Diagramme de la base de donnée</u>
 
 ![Diagram](./doc/db_diagram.png)
+<br></br>
+
+#### Projet réalisé par Kevish GAWRI, Sébastien DEWILDE et Sungrab TENZIN
